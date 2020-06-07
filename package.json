@@ -1,0 +1,35 @@
+{
+  "name": "koi",
+  "displayName": "Koi",
+  "publisher": "Ta-Seen Islam",
+  "description": "Koi language support for Visual Studio Code",
+  "license": "MIT",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.45.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tahscenery/vscode-koi.git"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "koi",
+        "aliases": ["Koi", "koi"],
+        "extensions": [".koi"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "koi",
+        "scopeName": "source.koi",
+        "path": "./syntaxes/koi.old.tmLanguage.json"
+      }
+    ]
+  }
+}

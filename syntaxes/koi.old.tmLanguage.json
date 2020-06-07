@@ -1,0 +1,343 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Koi",
+  "patterns": [
+    { "include": "#annotation" },
+    { "include": "#comment" },
+    { "include": "#backticks" },
+    { "include": "#identifier" },
+    { "include": "#keyword" },
+    { "include": "#binding" },
+    { "include": "#literal" },
+    { "include": "#entity" }
+  ],
+  "repository": {
+    "annotation": {
+      "name": "entity.name.function",
+      "begin": "{:",
+      "end": ":}",
+      "patterns": [
+        { "include": "$self" }
+      ]
+    },
+
+
+    "backticks": {
+      "begin": "`",
+      "end": "`"
+    },
+
+
+    "comment": {
+      "patterns": [
+        { "include": "#comment-line" },
+        { "include": "#comment-line-documentation" },
+        { "include": "#comment-line-documentation-global" },
+        { "include": "#comment-block" },
+        { "include": "#comment-block-documentation" },
+        { "include": "#shebang" }
+      ]
+    },
+    "comment-line": {
+      "name": "comment.line.koi",
+      "begin": "/{2}(?!(!|/))",
+      "end": "\n"
+    },
+    "comment-line-documentation": {
+      "name": "comment.line.documentation.koi",
+      "begin": "/{3}",
+      "end": "\n",
+      "patterns": [
+        { "include": "#comment-inline-code" }
+      ]
+    },
+    "comment-line-documentation-global": {
+      "name": "comment.line.documentation.koi",
+      "begin": "/{2}!",
+      "end": "\n",
+      "patterns": [
+        { "include": "#comment-inline-code" }
+      ]
+    },
+    "comment-block": {
+      "name": "comment.block.koi",
+      "begin": "\\(\\*(?!\\*[^\\)])",
+      "end": "\\*\\)",
+      "patterns": [
+        { "include": "#comment-block" }
+      ]
+    },
+    "comment-block-documentation": {
+      "name": "comment.block.documentation.koi",
+      "begin": "\\(\\*{2}",
+      "end": "^\\s*\\*\\)",
+      "patterns": [
+        { "--include": "#comment-inline-code" },
+        { "include": "#comment-block-documentation" },
+        { "include": "text.html.markdown" }
+      ]
+    },
+    "comment-inline-code": {
+      "begin": "`",
+      "end": "`",
+      "patterns": [
+        { "include": "$self" }
+      ],
+      "contentName": "meta.embedded.line.koi"
+    },
+    "shebang": {
+      "name": "comment.shebang.koi",
+      "begin": "^#!",
+      "end": "\n"
+    },
+
+
+    "expression": {
+      "patterns": [
+        { "include": "#expression-record" },
+        { "include": "#comment-block" },
+        { "include": "#keyword" },
+        { "include": "#literal" },
+        { "include": "#entity" }
+      ]
+    },
+    "expression-record": {
+      "begin": "{",
+      "end": "}",
+      "patterns": [
+        { "include": "$self" }
+      ]
+    },
+
+
+    "identifier": {
+      "patterns": [
+        { "include": "#identifier-core-types" }
+      ]
+    },
+    "identifier-core-types": {
+      "name": "keyword.other.koi",
+      "match": "(?<![[:word:]])(?:array|bool|char|float(32|64)?|list|u?int(8|16|32|64|128)?|seq|string|Self|\\(\\))(?![[:word:]])"
+    },
+
+
+    "keyword": {
+      "patterns": [
+        { "include": "#keyword-common" },
+        { "include": "#keyword-panic" },
+        { "include": "#keyword-async-await" },
+        { "include": "#keyword-structure" },
+        { "include": "#keyword-implicit-parameter-name" }
+      ]
+    },
+    "keyword-common": {
+      "name": "keyword.other.koi",
+      "match": "(?<![[:word:].:])(?:\\?{3}|(?:def|extends?|fun|(from|import|using)|let|module|new|nil|(export|public)|trait|type|val))(?![[:word:]])"
+    },
+    "keyword-panic": {
+      "name": "keyword.other.koi",
+      "match": "(\\?|!){1,3}"
+    },
+    "keyword-async-await": {
+      "name": "keyword.other.koi",
+      "match": "((?<![[:word:].:])async|await)(?![[:word:]])"
+    },
+    "keyword-structure": {
+      "name": "keyword.control.koi keyword.other.koi",
+      "match": "(?<![[:word:].:])(?:and|as|break|case|catch|deriv(es|ing)|do|elif|else|end|external|for(all)?|handle|if|in|match|mut(able|ating)?|not|of|or|ref|return|self|then|throws?|try|where|while|with|yield|(enum|struct))(?![[:word:]])"
+    },
+    "keyword-implicit-parameter-name": {
+      "name": "keyword.control.koi keyword.other.koi",
+      "match": "(?<![[:word:].:])\\$[[:digit:]]+(?![[:word:]])"
+    },
+
+
+    "literal": {
+      "patterns": [
+        { "include": "#literal-boolean" },
+        { "include": "#literal-character" },
+        { "include": "#literal-number" },
+        { "include": "#literal-string" }
+      ]
+    },
+    "literal-boolean": {
+      "name": "constant.language.boolean.koi",
+      "match": "(?<![[:word:].])(true|false)(?![[:word:]])"
+    },
+    "literal-character": {
+      "name": "string.quoted.single.koi",
+      "match": "'(?:(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.(?!\\s)))|.)([^'\\s]+)?'",
+      "captures": {
+        "1": { "name": "constant.character.escape.koi" },
+        "2": { "name": "invalid.illegal" }
+      }
+    },
+    "literal-number": {
+      "name": "constant.numeric.koi",
+      "match": "(?<![[:word:]])-?((?:0(b[0-1_]+|o[0-7_]+|x[0-9a-fA-F_]+))|[[:digit:]][[:digit:]_]*(?:\\.[[:digit:]][[:digit:]_]*)?)(?![[:word:]])"
+    },
+    "literal-string": {
+      "patterns": [
+        { "include": "#literal-triple-quoted-string-raw" },
+        { "include": "#literal-triple-quoted-string-format" },
+        { "include": "#literal-triple-quoted-string-static" },
+        { "include": "#literal-double-quoted-string-raw" },
+        { "include": "#literal-double-quoted-string-format" },
+        { "include": "#literal-double-quoted-string-static" },
+        { "include": "#literal-curly-quoted-string-raw" },
+        { "include": "#literal-curly-quoted-string-format" },
+        { "include": "#literal-curly-quoted-string-static" }
+      ]
+    },
+    "literal-escape-character": {
+      "name": "constant.character.escape.koi",
+      "match": "(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.|\\s))"
+    },
+    "literal-string-contents": {
+      "patterns": [
+        { "include": "#literal-escape-character" }
+      ]
+    },
+    "literal-string-interpolated-text": {
+      "begin": "{",
+      "end": "}(?:%[.<^>][[:digit:]]+)?",
+      "beginCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "endCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "contentName": "meta.embedded.koi meta.embedded.line.koi meta.template.expression.koi",
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+    "literal-triple-quoted-string-raw": {
+      "name": "string.quoted.triple.raw.koi",
+      "begin": "r(#*)\"{3}",
+      "end": "\"{3}\\1"
+    },
+    "literal-triple-quoted-string-format": {
+      "name": "string.quoted.triple.koi",
+      "begin": "f\"{3}",
+      "end": "\"{3}",
+      "patterns": [
+        { "include": "#literal-string-contents" },
+        { "include": "#literal-string-interpolated-text" }
+      ]
+    },
+    "literal-triple-quoted-string-static": {
+      "name": "string.quoted.triple.koi",
+      "begin": "\"{3}",
+      "end": "\"{3}",
+      "patterns": [
+        { "include": "#literal-string-contents" }
+      ]
+    },
+    "literal-double-quoted-string-raw": {
+      "name": "string.quoted.double.raw.koi",
+      "begin": "r(#*)\"",
+      "end": "\"\\1"
+    },
+    "literal-double-quoted-string-format": {
+      "name": "string.quoted.double.koi",
+      "begin": "f\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#literal-string-contents" },
+        { "include": "#literal-string-interpolated-text" }
+      ]
+    },
+    "literal-double-quoted-string-static": {
+      "name": "string.quoted.double.koi",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#literal-string-contents" }
+      ]
+    },
+    "literal-curly-quoted-string-interpolated-text": {
+      "begin": "(?<!{){(?!{|\\|)",
+      "end": "}(?:%[.<^>][[:digit:]]+)?",
+      "beginCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "endCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "contentName": "meta.embedded.koi meta.embedded.line.koi meta.template.expression.koi",
+      "patterns": [
+        { "include": "$self" }
+      ]
+    },
+    "literal-curly-quoted-string-raw": {
+      "name": "string.quoted.koi",
+      "begin": "r{([[:word:]]*)\\|",
+      "end": "\\|\\1}"
+    },
+    "literal-curly-quoted-string-format": {
+      "name": "string.quoted.koi",
+      "begin": "f{([[:word:]]*)\\|",
+      "end": "\\|\\1}",
+      "patterns": [
+        { "include": "#literal-escape-character" },
+        { "include": "#literal-string-interpolated-text" }
+      ]
+    },
+    "literal-curly-quoted-string-static": {
+      "name": "string.quoted.koi",
+      "begin": "{([[:word:]]*)\\|",
+      "end": "\\|\\1}",
+      "patterns": [
+        { "include": "#literal-escape-character" }
+      ]
+    },
+
+
+    "entity": {
+      "patterns": [
+        { "include": "#entity-function" },
+        { "include": "#entity-type" },
+        { "--include": "#entity-binding" },
+        { "include": "#entity-member" }
+      ]
+    },
+    "entity-function": {
+      "name": "entity.name.function",
+      "match": "[_[:alpha:]][[:word:]]*\\s*(?=\\()"
+    },
+    "entity-type": {
+      "match": "(?<=extend|trait|type)(\\s+(?:public\\s+)?)([_[:alpha:]][[:word:]]*)",
+      "captures": {
+        "1": {
+          "patterns": [
+            { "include": "#keyword" }
+          ]
+        },
+        "2": { "name":"entity.name.type" }
+      }
+    },
+    "entity-binding": {
+      "begin": "(?<=let|val)(\\s+(?:public\\s+)?(?:mutable\\s+)?)",
+      "end": "\\s+\\b",
+      "beginCaptures": {
+        "1": {
+          "patterns": [
+            { "include": "#keyword" }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "name": "variable.name",
+          "match": "([_[:alpha:]][[:word:]]*)(,\\s*[_[:alpha:]][[:word:]]*)*"
+        }
+      ]
+    },
+    "entity-member": {
+      "name": "variable.name",
+      "match": "(?<=\\.)[_[:alpha:]][[:word:]]*"
+    }
+  },
+  "scopeName": "source.koi"
+}
