@@ -47,9 +47,16 @@
         "title": "koi",
         "properties": {
           "koi.path": {
+            "description": "The path to the Koi executable",
             "type": "string",
-            "default": "$KOI_PATH",
-            "description": "The path to the Koi executable"
+            "default": "$KOI_PATH"
+          },
+          "koi.trace.server": {
+            "description": "Trace the communication between VSCode and KoiLS",
+            "scope": "window",
+            "type": "string",
+            "enum": ["off", "messages", "verbose"],
+            "default": "off"
           }
         }
       }
