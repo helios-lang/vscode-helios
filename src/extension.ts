@@ -8,11 +8,9 @@ export interface Configuration {
 }
 
 export function activate(ctx: vscode.ExtensionContext) {
-    const configuration: Configuration = { koiPath: "$KOI_PATH" };
-    const koiPath = vscode.workspace.getConfiguration("koi").get<string>("path");
-
+    const configuration: Configuration = { koiPath: '$KOI_PATH' };
+    const koiPath = vscode.workspace.getConfiguration('koi').get<string>('path');
     if (koiPath) { configuration.koiPath = koiPath; }
-    client = new KoiLSClient(configuration);
 
     ctx.subscriptions.push(
         vscode.languages.setLanguageConfiguration('koi', {
@@ -35,6 +33,9 @@ export function activate(ctx: vscode.ExtensionContext) {
     );
 
     vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
+
+    client = new KoiLSClient(configuration);
+    client.start();
 }
 
 export async function deactivate() {
@@ -42,6 +43,6 @@ export async function deactivate() {
 }
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
-    if (document.languageId !== "koi") { return; }
+    if (document.languageId !== 'koi') { return; }
     vscode.window.showInformationMessage(`Opened: ${document.uri}`);
 }

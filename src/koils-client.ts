@@ -1,6 +1,6 @@
 import * as lc from 'vscode-languageclient';
 import * as vscode from 'vscode';
-import { Configuration } from './`extension';
+import { Configuration } from './extension';
 
 export default class KoiLSClient {
     private languageClient: lc.LanguageClient | undefined;
@@ -13,7 +13,7 @@ export default class KoiLSClient {
         this.disposables = [];
     }
 
-    public start(_ctx: vscode.ExtensionContext) {
+    public start() {
         let serverOptions: lc.Executable = {
             command: this.configuration.koiPath,
             args: ['ide'],
@@ -26,8 +26,7 @@ export default class KoiLSClient {
             documentSelector: [
                 { scheme: 'file', language: 'koi' },
                 { scheme: 'untitled', language: 'koi' }
-            ],
-            // workspaceFolder: vscode.workspace.getWorkspaceFolder(this.location)
+            ]
         };
 
         this.languageClient = new lc.LanguageClient(
@@ -40,16 +39,17 @@ export default class KoiLSClient {
         this.registerCommands();
 
         this.disposables.push(this.languageClient.start());
+        vscode.window.showInformationMessage('Started KoiLS');
     }
 
     private registerCommands() {
         this.disposables.push(vscode.commands.registerCommand('koils.run', () => {
-            vscode.window.showInformationMessage("KoiLS: Run");
+            vscode.window.showInformationMessage('KoiLS: Run');
         }));
     }
 
     public async stop() {
-        console.log("Stopping client...");
+        vscode.window.showInformationMessage('Stopping KoiLS...');
         await this.languageClient?.stop();
         this.disposables.forEach(disposable => disposable.dispose());
     }
