@@ -39,7 +39,7 @@ export default class KoiLSClient {
         this.registerCommands();
 
         this.disposables.push(this.languageClient.start());
-        vscode.window.showInformationMessage('Started KoiLS');
+        // vscode.window.showInformationMessage('Started KoiLS');
     }
 
     private registerCommands() {
@@ -49,7 +49,7 @@ export default class KoiLSClient {
     }
 
     public async stop() {
-        vscode.window.showInformationMessage('Stopping KoiLS...');
+        // vscode.window.showInformationMessage('Stopping KoiLS...');
         await this.languageClient?.stop();
         this.disposables.forEach(disposable => disposable.dispose());
     }
