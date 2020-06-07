@@ -1,7 +1,7 @@
 {
   "name": "koi",
   "displayName": "Koi",
-  "publisher": "Ta-Seen Islam",
+  "publisher": "koi-lang",
   "description": "Koi language support for Visual Studio Code",
   "license": "MIT",
   "version": "0.0.1",
