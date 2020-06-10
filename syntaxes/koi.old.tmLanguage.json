@@ -166,8 +166,10 @@
     },
     "literal-character": {
       "name": "string.quoted.single.koi",
-      "match": "'(?:(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.(?!\\s)))|.)([^'\\s]+)?'",
-      "captures": {
+      "begin": "'",
+      "end": "'",
+      "--match": "'(?:(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.(?!\\s)))|.)([^'\\s]+)?'",
+      "--captures": {
         "1": { "name": "constant.character.escape.koi" },
         "2": { "name": "invalid.illegal" }
       }
