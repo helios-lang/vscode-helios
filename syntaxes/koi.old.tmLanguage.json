@@ -160,6 +160,10 @@
         { "include": "#literal-string" }
       ]
     },
+    "literal-escape-sequence": {
+      "name": "constant.character.escape.koi",
+      "match": "(\\\\(?:x[A-Fa-f0-9]{2}|u{[A-fa-f0-9]{1,6}}|.|\\s))"
+    },
     "literal-boolean": {
       "name": "constant.language.boolean.koi",
       "match": "(?<![[:word:].])(true|false)(?![[:word:]])"
@@ -168,7 +172,12 @@
       "name": "string.quoted.single.koi",
       "begin": "'",
       "end": "'",
-      "--match": "'(?:(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.(?!\\s)))|.)([^'\\s]+)?'",
+      "patterns": [
+        {
+          "include": "#literal-escape-sequence"
+        }
+      ],
+      "--match": "'(?:(\\\\(?:x[A-Fa-f0-9]{2}|u{[A-fa-f0-9]{1,6}}|.(?!\\s)))|.)([^'\\s]+)?'",
       "--captures": {
         "1": { "name": "constant.character.escape.koi" },
         "2": { "name": "invalid.illegal" }
@@ -191,13 +200,9 @@
         { "include": "#literal-curly-quoted-string-static" }
       ]
     },
-    "literal-escape-character": {
-      "name": "constant.character.escape.koi",
-      "match": "(\\\\(?:x{[A-fa-f0-9]{2}}|u{[A-fa-f0-9]{1,6}}|.|\\s))"
-    },
     "literal-string-contents": {
       "patterns": [
-        { "include": "#literal-escape-character" }
+        { "include": "#literal-escape-sequence" }
       ]
     },
     "literal-string-interpolated-text": {
@@ -282,7 +287,7 @@
       "begin": "f{([[:word:]]*)\\|",
       "end": "\\|\\1}",
       "patterns": [
-        { "include": "#literal-escape-character" },
+        { "include": "#literal-escape-sequence" },
         { "include": "#literal-string-interpolated-text" }
       ]
     },
@@ -291,7 +296,7 @@
       "begin": "{([[:word:]]*)\\|",
       "end": "\\|\\1}",
       "patterns": [
-        { "include": "#literal-escape-character" }
+        { "include": "#literal-escape-sequence" }
       ]
     },
 
