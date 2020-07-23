@@ -24,10 +24,10 @@ export function activate(ctx: vscode.ExtensionContext) {
                     action: { indentAction: vscode.IndentAction.None, appendText: '//! ' }
                 }
             ],
-            indentationRules: {
-                increaseIndentPattern: /^.*(=>?|->|(do|else|elif|module|then|with))\s*$/,
-                decreaseIndentPattern: /^\s*(deriving|else|elif|end)(?:\b|;)$/
-            },
+            // indentationRules: {
+            //     increaseIndentPattern: /^.*(=>?|->|(do|else|elif|module|then))\s*$/,
+            //     decreaseIndentPattern: /^\s*(deriving|else|elif|end)(?:\b|;)$/
+            // },
             wordPattern: /(-?(?:\d+(?:\.\d+)?|\.\d+)\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g
         })
     );
