@@ -17,17 +17,13 @@ export function activate(ctx: vscode.ExtensionContext) {
             onEnterRules: [
                 {
                     beforeText: /^\s*\/{3}/,
-                    action: { indentAction: vscode.IndentAction.None, appendText: '/// ' }
+                    action: { indentAction: vscode.IndentAction.None, appendText: '/// ' },
                 },
                 {
                     beforeText: /^\s*\/{2}!/,
-                    action: { indentAction: vscode.IndentAction.None, appendText: '//! ' }
-                }
+                    action: { indentAction: vscode.IndentAction.None, appendText: '//! ' },
+                },
             ],
-            // indentationRules: {
-            //     increaseIndentPattern: /^.*(=>?|->|(do|else|elif|module|then))\s*$/,
-            //     decreaseIndentPattern: /^\s*(deriving|else|elif|end)(?:\b|;)$/
-            // },
             wordPattern: /(-?(?:\d+(?:\.\d+)?|\.\d+)\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g
         })
     );
@@ -44,5 +40,5 @@ export async function deactivate() {
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
     if (document.languageId !== 'koi') { return; }
-    vscode.window.showInformationMessage(`Opened: ${document.uri}`);
+    console.log(`Opened document: ${document.uri}`);
 }
