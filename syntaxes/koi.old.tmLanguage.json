@@ -81,7 +81,8 @@
     "identifier": {
       "patterns": [
         { "include": "#identifier-support-types" },
-        { "include": "#identifier-support-functions" }
+        { "include": "#identifier-support-functions" },
+        { "include": "#identifier-enum-member" }
       ]
     },
     "identifier-support-types": {
@@ -91,6 +92,12 @@
     "identifier-support-functions": {
       "name": "support.function.koi",
       "match": "(?<![[:word:]])(?:assert(_eq)?|(e)?print(ln)?)(?![[:word:]])"
+    },
+    "identifier-enum-member": {
+      "match": "(?<=case)\\s*([_[:alpha:]][[:word:]]*)",
+      "captures": {
+        "1": { "name": "variable.other.enumMember" }
+      }
     },
 
 
@@ -109,11 +116,11 @@
     },
     "keyword-common": {
       "name": "keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:\\?{3}|(?:case|const|def|enum|extend|fun|let|macro|module|public\\s*(\\(\\s*(?:get|set)(?:\\s*;\\s*(?:get|set))?\\s*\\))?|struct|trait|type|using|var))(?![[:word:]])"
+      "match": "(?<![[:word:].:#])(?:case|const|enum|extend|fun|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|public[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|type|using|var)(?![[:word:]])"
     },
     "keyword-structure": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:_|and|as|catch|else|external|for|if|in|internal|match|not|of|operator|or|ref|return|self|take|try|where|while|with)(?![[:word:]])"
+      "match": "(?<![[:word:].:#])(?:_|and|as|catch|else|external|for|if|in|match|not|of|operator[ \t]*(\\((?:pre|in|post)fix\\))?|or|ref|return|self|super|take|try|where|while|with)(?![[:word:]])"
     },
     "keyword-miscellaneous": {
       "name": "keyword.control.koi keyword.other.koi",
@@ -140,11 +147,11 @@
     },
     "literal-boolean": {
       "name": "constant.language.boolean.koi",
-      "match": "(?<![[:word:].])(True|False)(?![[:word:]])"
+      "match": "(?<![[:word:].#])(True|False)(?![[:word:]])"
     },
     "literal-constructor": {
       "name": "constant.language.boolean.koi",
-      "match": "(?<![:word:])(Some|None|Ok|Err)(?![[:word:]])"
+      "match": "(?<![[:word:]#])(Some|None|Ok|Err)(?![[:word:]])"
     },
     "literal-character": {
       "name": "string.quoted.single.koi",
@@ -270,7 +277,11 @@
     },
     "entity-function-binding": {
       "name": "entity.name.function",
-      "match": "(?<=fun)\\s+(#?[_[:alpha:]][[:word:]]*)"
+      "match": "(?<=fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "--match": "(?:(?<!#)fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "--captures": {
+        "1": { "name": "entity.name.function.koi" }
+      }
     },
     "entity-function-invocation": {
       "name": "entity.name.function",
@@ -278,7 +289,8 @@
       "match": "(#?[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W))"
     },
     "entity-type-binding": {
-      "match": "(?<=const|extend|module|trait|type)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "match": "(?<=extend|module|trait|type)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "--match": "(?:(?<!#)(?:const|extend|module|trait|type))\\s+(#?[_[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "entity.name.type" }
       }
@@ -287,6 +299,12 @@
       "match": "(?<=let|var)\\s+(#?[_[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "variable.name.koi" }
+      },
+      "--FIXME": "Type annotation doesn't match if it has parameters (e.g. `Tree(of T)`)",
+      "--match": "(?:(?<!#)(?:let|var))\\s+(#?[_[:alpha:]][[:word:]]*)(?:\\s*:\\s*([_[:alpha:]][[:word:]?]*|\\?{3}))?",
+      "--captures": {
+        "1": { "name": "variable.name.koi" },
+        "2": { "name": "entity.name.type.koi" }
       }
     },
 
