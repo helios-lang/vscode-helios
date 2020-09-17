@@ -18,7 +18,7 @@ export default class KoiLSClient {
             command: this.configuration.koiPath,
             args: ['ide'],
             options: {
-                env: { RUST_BACKTRACE: 1 }
+                env: { RUST_BACKTRACE: 1, RUST_LOG: "koi=trace" },
             }
         };
 
