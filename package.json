@@ -60,6 +60,12 @@
           }
         }
       }
+    ],
+    "snippets": [
+      {
+        "language": "koi",
+        "path": "./snippets/koi.json"
+      }
     ]
   },
   "scripts": {

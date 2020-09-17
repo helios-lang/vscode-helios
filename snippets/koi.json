@@ -1,1 +1,48 @@
-{}
+{
+  "Case clause": {
+    "prefix": ["case"],
+    "body": [
+      "case ${1:pattern} => ${0:expr}"
+    ]
+  },
+  "For loop": {
+    "prefix": ["for"],
+    "body": [
+      "for ${1:element} in ${2:collection} {",
+      "\t${0:expr}",
+      "}"
+    ]
+  },
+  "Function": {
+    "prefix": ["fun"],
+    "body": [
+      "fun ${1:my_function}(${2:params}): ${3:ReturnType} {",
+      "\t${0:???}",
+      "}"
+    ]
+  },
+  "Let binding": {
+    "prefix": ["let"],
+    "body": "let ${1:ident} = ${0:expr}"
+  },
+  "Match clause": {
+    "prefix": ["match"],
+    "body": [
+      "match ${1:expr} {",
+      "\tcase ${2:pattern} => ${0:expr}",
+      "}"
+    ]
+  },
+  "Var binding": {
+    "prefix": ["var"],
+    "body": "var ${1:ident} = ${0:expr}"
+  },
+  "Struct declaration": {
+    "prefix": ["type", "type-struct"],
+    "body": [
+      "type ${1:MyType} = struct {",
+      "\t${0}",
+      "}"
+    ]
+  }
+}
