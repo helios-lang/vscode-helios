@@ -116,7 +116,7 @@
     },
     "keyword-common": {
       "name": "keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:case|const|enum|extend|fun|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|public[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|type|using|var)(?![[:word:]])"
+      "match": "(?<![[:word:].:#])(?:case|const|enum|extend|fun|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|pub[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|type|using|var)(?![[:word:]])"
     },
     "keyword-structure": {
       "name": "keyword.control.koi keyword.other.koi",
@@ -147,7 +147,7 @@
     },
     "literal-boolean": {
       "name": "constant.language.boolean.koi",
-      "match": "(?<![[:word:].#])(True|False)(?![[:word:]])"
+      "match": "(?<![[:word:]#])(True|False)(?![[:word:]])"
     },
     "literal-constructor": {
       "name": "constant.language.boolean.koi",
