@@ -22,17 +22,19 @@
     { "open": "f`", "close": "`", "notIn": ["string"] },
     { "open": "r`", "close": "`", "notIn": ["string"] },
 
-    { "open": "\"",  "close": "\"", "notIn": ["string"] },
-    { "open": "f\"", "close": "\"", "notIn": ["string"] },
-    { "open": "r\"", "close": "\"", "notIn": ["string"] },
+    { "open": "\"",  "close": "\"", "notIn": ["comment", "string"] },
+    { "open": "f\"", "close": "\"", "notIn": ["comment", "string"] },
+    { "open": "r\"", "close": "\"", "notIn": ["comment", "string"] },
+    { "open": "#\"", "close": "\"#","notIn": ["comment", "string"] },
 
-    { "open": "\"\"\"",  "close": "\"\"\"", "notIn": ["comment"] },
-    { "open": "f\"\"\"", "close": "\"\"\"", "notIn": ["comment"] },
-    { "open": "r\"\"\"", "close": "\"\"\"", "notIn": ["comment"] },
+    { "open": "\"\"\"",  "close": "\"\"\"", "notIn": ["comment", "string"] },
+    { "open": "f\"\"\"", "close": "\"\"\"", "notIn": ["comment", "string"] },
+    { "open": "r\"\"\"", "close": "\"\"\"", "notIn": ["comment", "string"] },
+    { "open": "#\"\"\"", "close": "\"\"\"#","notIn": ["comment", "string"] },
 
-    { "open": "[:", "close": ":", "notIn": ["string", "comment"] },
-    { "open": "[%", "close": "%", "notIn": ["string", "comment"] },
-    { "open": "{|", "close": "|", "notIn": ["string", "comment"] }
+    { "open": "[:", "close": ":", "notIn": ["comment", "string"] },
+    { "open": "[%", "close": "%", "notIn": ["comment", "string"] },
+    { "open": "{|", "close": "|", "notIn": ["comment", "string"] }
   ],
   // symbols that that can be used to surround a selection
   "surroundingPairs": [

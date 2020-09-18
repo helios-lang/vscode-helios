@@ -201,13 +201,13 @@
     },
     "literal-triple-quoted-string-raw": {
       "name": "string.quoted.triple.raw.koi",
-      "begin": "r\"{3}",
-      "end": "\"{3}"
+      "begin": "r(#*)\"{3}",
+      "end": "\"{3}\\1"
     },
     "literal-triple-quoted-string-format": {
       "name": "string.quoted.triple.koi",
-      "begin": "f\"{3}",
-      "end": "\"{3}",
+      "begin": "f(#*)\"{3}",
+      "end": "\"{3}\\1",
       "patterns": [
         { "include": "#literal-string-contents" },
         { "include": "#literal-string-interpolated-text" }
@@ -215,21 +215,21 @@
     },
     "literal-triple-quoted-string-static": {
       "name": "string.quoted.triple.koi",
-      "begin": "\"{3}",
-      "end": "\"{3}",
+      "begin": "(#*)\"{3}",
+      "end": "\"{3}\\1",
       "patterns": [
         { "include": "#literal-string-contents" }
       ]
     },
     "literal-double-quoted-string-raw": {
       "name": "string.quoted.double.raw.koi",
-      "begin": "r\"",
-      "end": "\""
+      "begin": "r(#*)\"",
+      "end": "\"\\1"
     },
     "literal-double-quoted-string-format": {
       "name": "string.quoted.double.koi",
-      "begin": "f\"",
-      "end": "\"",
+      "begin": "f(#*)\"",
+      "end": "\"\\1",
       "patterns": [
         { "include": "#literal-string-contents" },
         { "include": "#literal-string-interpolated-text" }
@@ -237,8 +237,8 @@
     },
     "literal-double-quoted-string-static": {
       "name": "string.quoted.double.koi",
-      "begin": "\"",
-      "end": "\"",
+      "begin": "(#*)\"",
+      "end": "\"\\1",
       "patterns": [
         { "include": "#literal-string-contents" }
       ]
