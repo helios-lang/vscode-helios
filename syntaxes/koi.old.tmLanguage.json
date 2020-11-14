@@ -40,7 +40,7 @@
     },
     "comment-block": {
       "name": "comment.block.koi",
-      "begin": "{([[:word:]@#%*]*)\\|",
+      "begin": "{([[:word:] @#%*]*)\\|",
       "end": "\\|\\1}",
       "patterns": [
         { "include": "#comment-block" }
@@ -87,14 +87,14 @@
     },
     "identifier-support-types": {
       "name": "support.class.koi",
-      "match": "(?<![[:word:]])(?:Bool|Char|Float(32|64)?|U?Int(8|16|32|64|128)?|Optional|Result|String|Self)(?![[:word:]])"
+      "match": "(?<![[:word:]])(?:Bool|Char|Float(32|64)?|U?Int(8|16|32|64|128)?|Future|Optional|Result|String|Self)(?![[:word:]])"
     },
     "identifier-support-functions": {
       "name": "support.function.koi",
       "match": "(?<![[:word:]])(?:assert(_eq)?|(e)?print(ln)?)(?![[:word:]])"
     },
     "identifier-enum-member": {
-      "match": "(?<=case)\\s*([_[:alpha:]][[:word:]]*)",
+      "match": "(?<=case|\\|)\\s*([._[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "variable.other.enumMember" }
       }
@@ -116,19 +116,19 @@
     },
     "keyword-common": {
       "name": "keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:case|const|enum|extend|fun|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|pub[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|type|using|var)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:case|const|enum|extend|fun(ction)?|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|pub(lic)?[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|(sub|new)?type|using|var|(exports?|exposing|import|then|continue|repeat|break|yield|expect|interface|default|instance|val|class|do|end))(?![[:word:]])"
     },
     "keyword-structure": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:_|and|as|catch|else|external|for|if|in|match|not|of|operator[ \t]*(\\((?:pre|in|post)fix\\))?|or|ref|return|self|super|take|try|where|while|with)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:_|and|as|catch|else|external|for|if|in|is|match|not|of|operator[ \t]*(\\((?:pre|in|post)fix\\))?|or|ref|return|self|super|take|try|where|while|with)(?![[:word:]])"
     },
     "keyword-miscellaneous": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:#])(?:get|set)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:get|set)(?![[:word:]])"
     },
     "keyword-implicit-parameter-name": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:])\\$[[:digit:]]+(?![[:word:]])"
+      "match": "(?<![[:word:].:])\\$([[:digit:]]+|it|value)(?![[:word:]])"
     },
 
 
@@ -147,11 +147,11 @@
     },
     "literal-boolean": {
       "name": "constant.language.boolean.koi",
-      "match": "(?<![[:word:]#])(True|False)(?![[:word:]])"
+      "match": "(?<![[:word:]`])(True|False)(?![[:word:]])"
     },
     "literal-constructor": {
       "name": "constant.language.boolean.koi",
-      "match": "(?<![[:word:]#])(Some|None|Ok|Err)(?![[:word:]])"
+      "match": "(?<![[:word:]`])(Some|None|Ok|Err)(?![[:word:]])"
     },
     "literal-character": {
       "name": "string.quoted.single.koi",
@@ -165,7 +165,7 @@
     },
     "literal-number": {
       "name": "constant.numeric.koi",
-      "match": "(?<![[:word:]])-?((?:0(b[0-1_]+|o[0-7_]+|x[0-9a-fA-F_]+))|[[:digit:]][[:digit:]_]*(?:\\.[[:digit:]][[:digit:]_]*)?)(?![[:word:]])"
+      "match": "(?<![[:word:]])-?((?:0(b[0-1_]+|o[0-7_]+|x[0-9a-fA-F_]+))|[[:digit:]][[:digit:]_]*(?:\\.[[:digit:]][[:digit:]_]*)?)(?:(?:[iu](?:8|16|32|64)?|f(?:32|64)?))?(?![[:word:]])"
     },
     "literal-string": {
       "patterns": [
@@ -175,9 +175,9 @@
         { "include": "#literal-double-quoted-string-raw" },
         { "include": "#literal-double-quoted-string-format" },
         { "include": "#literal-double-quoted-string-static" },
-        { "include": "#literal-backtick-quoted-string-raw" },
-        { "include": "#literal-backtick-quoted-string-format" },
-        { "include": "#literal-backtick-quoted-string-static" }
+        { "--include": "#literal-backtick-quoted-string-raw" },
+        { "--include": "#literal-backtick-quoted-string-format" },
+        { "--include": "#literal-backtick-quoted-string-static" }
       ]
     },
     "literal-string-contents": {
@@ -243,12 +243,12 @@
         { "include": "#literal-string-contents" }
       ]
     },
-    "literal-backtick-quoted-string-raw": {
+    "--literal-backtick-quoted-string-raw": {
       "name": "string.quoted.koi",
       "begin": "r`",
       "end": "`"
     },
-    "literal-backtick-quoted-string-format": {
+    "--literal-backtick-quoted-string-format": {
       "name": "string.quoted.koi",
       "begin": "f`",
       "end": "`",
@@ -257,7 +257,7 @@
         { "include": "#literal-string-interpolated-text" }
       ]
     },
-    "literal-backtick-quoted-string-static": {
+    "--literal-backtick-quoted-string-static": {
       "name": "string.quoted.koi",
       "begin": "`",
       "end": "`",
@@ -277,26 +277,27 @@
     },
     "entity-function-binding": {
       "name": "entity.name.function",
-      "match": "(?<=fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
-      "--match": "(?:(?<!#)fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "match": "(?<=fun|function)\\s+(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)",
+      "--match1": "(?<=fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "--match2": "(?:(?<!#)fun)\\s+(#?[_[:alpha:]][[:word:]]*)",
       "--captures": {
         "1": { "name": "entity.name.function.koi" }
       }
     },
     "entity-function-invocation": {
       "name": "entity.name.function",
-      "--match": "(#?[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W)|{(?:.|\\s)*case|{.*=>)",
-      "match": "(#?[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W))"
+      "match": "(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W))",
+      "--match": "(#?[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W)|{(?:.|\\s)*case|{.*=>)"
     },
     "entity-type-binding": {
-      "match": "(?<=extend|module|trait|type)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "match": "(?<=class|extend|interface|instance|module|trait|type)\\s+([_[:alpha:]][[:word:]]*)",
       "--match": "(?:(?<!#)(?:const|extend|module|trait|type))\\s+(#?[_[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "entity.name.type" }
       }
     },
     "entity-variable-binding": {
-      "match": "(?<=let|var)\\s+(#?[_[:alpha:]][[:word:]]*)",
+      "match": "(?<=let|val|var)\\s+(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "variable.name.koi" }
       },
@@ -311,7 +312,7 @@
 
     "symbol": {
       "name": "keyword.other.koi",
-      "match": "(\\+|-|\\*|\\/|=|;|~|@|\\$|%|&|\\||\\^|<|>)"
+      "match": "(\\.{3}|\\+|-|\\*|\\/|=|;|~|@|\\$|%|&|\\||\\^|<|>)"
     }
   },
   "scopeName": "source.koi"

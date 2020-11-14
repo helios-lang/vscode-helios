@@ -5,6 +5,22 @@
       "case ${1:pattern} => ${0:expr}"
     ]
   },
+  "Else branch": {
+    "prefix": ["else"],
+    "body": [
+      "else {",
+      "\t${0:expr}",
+      "}"
+    ]
+  },
+  "Enum declaration": {
+    "prefix": ["type-enum"],
+    "body": [
+      "type ${1:MyType} = enum {",
+      "\tcase ${0}",
+      "}"
+    ]
+  },
   "For loop": {
     "prefix": ["for"],
     "body": [
@@ -13,10 +29,34 @@
       "}"
     ]
   },
+  "For-yield expression": {
+    "prefix": ["for-yield"],
+    "body": [
+      "for {",
+      "\t${1:ident} <- ${2:expr}",
+      "} yield ${0:???}"
+    ]
+  },
   "Function": {
     "prefix": ["fun"],
     "body": [
-      "fun ${1:my_function}(${2:params}): ${3:ReturnType} {",
+      "fun ${1:myFunction}(${2:params}): ${3:ReturnType} {",
+      "\t${0:???}",
+      "}"
+    ]
+  },
+  "If expression": {
+    "prefix": ["if"],
+    "body": [
+      "if ${1:expr} {",
+      "\t${0:???}",
+      "}"
+    ]
+  },
+  "If-let expression": {
+    "prefix": ["if-let"],
+    "body": [
+      "if let ${1:pattern} = ${2:expr} {",
       "\t${0:???}",
       "}"
     ]
@@ -33,15 +73,31 @@
       "}"
     ]
   },
+  "Struct declaration": {
+    "prefix": ["type-struct"],
+    "body": [
+      "type ${1:MyType} = struct {",
+      "\t${0}",
+      "}"
+    ]
+  },
+  "Try-catch clause": {
+    "prefix": ["try", "try-catch"],
+    "body": [
+      "try ${1:expr} catch",
+      "\tcase ${2:e} => ${0:???}",
+      "}"
+    ]
+  },
   "Var binding": {
     "prefix": ["var"],
     "body": "var ${1:ident} = ${0:expr}"
   },
-  "Struct declaration": {
-    "prefix": ["type", "type-struct"],
+  "While loop": {
+    "prefix": ["while"],
     "body": [
-      "type ${1:MyType} = struct {",
-      "\t${0}",
+      "while ${1:expr} {",
+      "\t${0:expr}",
       "}"
     ]
   }
