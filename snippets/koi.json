@@ -1,23 +1,9 @@
 {
-  "Case clause": {
-    "prefix": ["case"],
-    "body": [
-      "case ${1:pattern} => ${0:expr}"
-    ]
-  },
   "Else branch": {
     "prefix": ["else"],
     "body": [
       "else {",
       "\t${0:expr}",
-      "}"
-    ]
-  },
-  "Enum declaration": {
-    "prefix": ["type-enum"],
-    "body": [
-      "type ${1:MyType} = enum {",
-      "\tcase ${0}",
       "}"
     ]
   },
@@ -29,18 +15,10 @@
       "}"
     ]
   },
-  "For-yield expression": {
-    "prefix": ["for-yield"],
-    "body": [
-      "for {",
-      "\t${1:ident} <- ${2:expr}",
-      "} yield ${0:???}"
-    ]
-  },
   "Function": {
-    "prefix": ["fun"],
+    "prefix": ["function"],
     "body": [
-      "fun ${1:myFunction}(${2:params}): ${3:ReturnType} {",
+      "function ${1:my_function}(${2:params}): ${3:Return_Type} {",
       "\t${0:???}",
       "}"
     ]
@@ -69,25 +47,17 @@
     "prefix": ["match"],
     "body": [
       "match ${1:expr} {",
-      "\tcase ${2:pattern} => ${0:expr}",
+      "\t| ${2:pattern} => ${0:expr}",
       "}"
     ]
   },
-  "Struct declaration": {
-    "prefix": ["type-struct"],
-    "body": [
-      "type ${1:MyType} = struct {",
-      "\t${0}",
-      "}"
-    ]
+  "Type declaration": {
+    "prefix": ["type"],
+    "body": "type ${1:MyType} = ${0:???}"
   },
-  "Try-catch clause": {
-    "prefix": ["try", "try-catch"],
-    "body": [
-      "try ${1:expr} catch",
-      "\tcase ${2:e} => ${0:???}",
-      "}"
-    ]
+  "Type-alias declaration": {
+    "prefix": ["type-alias"],
+    "body": "type alias ${1:MyType} = ${0:???}"
   },
   "Var binding": {
     "prefix": ["var"],
