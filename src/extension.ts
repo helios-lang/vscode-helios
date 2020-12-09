@@ -1,40 +1,46 @@
-import * as vscode from 'vscode';
-import HLSClient from './client';
+import * as vs from "vscode";
+import HLSClient, { HLSConfiguration } from "./client";
 
 let client: HLSClient;
 
-export interface Configuration {
-    heliosPath: string;
-}
-
-export function activate(ctx: vscode.ExtensionContext) {
-    const configuration: Configuration = { heliosPath: '$HELIOS_PATH' };
-    const heliosPath = vscode.workspace.getConfiguration('helios').get<string>('path');
-    if (heliosPath) { configuration.heliosPath = heliosPath; }
+export function activate(ctx: vs.ExtensionContext) {
+    let workspaceConfig = vs.workspace.getConfiguration("helios");
+    const config: HLSConfiguration = {
+        heliosPath: workspaceConfig.get("path") || "$HELIOS_PATH",
+    };
 
     ctx.subscriptions.push(
-        vscode.languages.setLanguageConfiguration('helios', {
+        vs.languages.setLanguageConfiguration("helios", {
             onEnterRules: [
                 {
                     beforeText: /^\s*-{2}\|/,
-                    action: { indentAction: vscode.IndentAction.None, appendText: '--| ' },
+                    action: {
+                        indentAction: vs.IndentAction.None,
+                        appendText: "--| ",
+                    },
                 },
                 {
                     beforeText: /^\s*\/{3}/,
-                    action: { indentAction: vscode.IndentAction.None, appendText: '/// ' },
+                    action: {
+                        indentAction: vs.IndentAction.None,
+                        appendText: "/// ",
+                    },
                 },
                 {
                     beforeText: /^\s*\/{2}!/,
-                    action: { indentAction: vscode.IndentAction.None, appendText: '//! ' },
+                    action: {
+                        indentAction: vs.IndentAction.None,
+                        appendText: "//! ",
+                    },
                 },
             ],
-            wordPattern: /(-?(?:\d+(?:\.\d+)?|\.\d+)\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g
+            wordPattern: /(-?(?:\d+(?:\.\d+)?|\.\d+)\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
         })
     );
 
-    vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
+    vs.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
 
-    client = new HLSClient(configuration);
+    client = new HLSClient(config);
     client.start();
 }
 
@@ -42,7 +48,10 @@ export async function deactivate() {
     await client.stop();
 }
 
-function onDidOpenTextDocument(document: vscode.TextDocument) {
-    if (document.languageId !== 'helios') { return; }
+function onDidOpenTextDocument(document: vs.TextDocument) {
+    if (document.languageId !== "helios") {
+        return;
+    }
+
     console.log(`Opened ${document.uri}`);
 }

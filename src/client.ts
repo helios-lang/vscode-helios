@@ -1,37 +1,59 @@
-import * as lc from 'vscode-languageclient';
-import * as vscode from 'vscode';
-import { Configuration } from './extension';
+import * as lc from "vscode-languageclient";
+import * as vs from "vscode";
 
+/**
+ * Describes all the configurations available for this extension.
+ */
+export interface HLSConfiguration {
+    /** The path to the Helios compiler executable. */
+    heliosPath: string;
+}
+
+/**
+ * A class that represents the client of the language server.
+ */
 export default class HLSClient {
     private languageClient: lc.LanguageClient | undefined;
-    private configuration: Configuration;
-    private disposables: vscode.Disposable[];
+    private configuration: HLSConfiguration;
+    private disposables: vs.Disposable[];
 
-    public constructor(configuration: Configuration) {
+    /**
+     * Construct a new `HLSClient` with the given configuration.
+     */
+    public constructor(configuration: HLSConfiguration) {
         this.languageClient = undefined;
         this.configuration = configuration;
         this.disposables = [];
     }
 
+    /**
+     * Starts the language server client.
+     *
+     * This method will summon the Helios compiler with the "ide" argument to
+     * start the language server. It will also register commands that are
+     * associated with this extension.
+     */
     public start() {
+        console.log("Starting HLS...");
+
         let serverOptions: lc.Executable = {
             command: this.configuration.heliosPath,
-            args: ['ide'],
+            args: ["ide"],
             options: {
                 env: { RUST_BACKTRACE: 1, RUST_LOG: "koi=trace" },
-            }
+            },
         };
 
         let clientOptions: lc.LanguageClientOptions = {
             documentSelector: [
-                { scheme: 'file', language: 'helios' },
-                { scheme: 'untitled', language: 'helios' }
-            ]
+                { scheme: "file", language: "helios" },
+                { scheme: "untitled", language: "helios" },
+            ],
         };
 
         this.languageClient = new lc.LanguageClient(
-            'HLS',
-            'Helios Language Server',
+            "HLS",
+            "Helios Language Server",
             serverOptions,
             clientOptions
         );
@@ -41,13 +63,20 @@ export default class HLSClient {
     }
 
     private registerCommands() {
-        this.disposables.push(vscode.commands.registerCommand('hls.run', () => {
-            vscode.window.showInformationMessage('HLS: Run');
-        }));
+        this.disposables.push(
+            vs.commands.registerCommand("hls.run", () => {
+                vs.window.showInformationMessage("HLS: Run");
+            })
+        );
     }
 
+    /**
+     * Stops the language server client.
+     *
+     * This should be called when the extension is deactivated.
+     */
     public async stop() {
-        // vscode.window.showInformationMessage('Stopping HLS...');
+        console.log("Stopping HLS...");
         await this.languageClient?.stop();
         this.disposables.forEach(disposable => disposable.dispose());
     }
