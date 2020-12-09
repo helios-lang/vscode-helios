@@ -40,7 +40,7 @@
       {
         "language": "helios",
         "scopeName": "source.helios",
-        "path": "./syntaxes/helios.tmLanguage.json"
+        "path": "./syntaxes/koi.tmLanguage.json"
       }
     ],
     "configuration": [
