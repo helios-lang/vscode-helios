@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
-import KoiLSClient from './koils-client';
+import HLSClient from './client';
 
-let client: KoiLSClient;
+let client: HLSClient;
 
 export interface Configuration {
-    koiPath: string;
+    heliosPath: string;
 }
 
 export function activate(ctx: vscode.ExtensionContext) {
-    const configuration: Configuration = { koiPath: '$KOI_PATH' };
-    const koiPath = vscode.workspace.getConfiguration('koi').get<string>('path');
-    if (koiPath) { configuration.koiPath = koiPath; }
+    const configuration: Configuration = { heliosPath: '$HELIOS_PATH' };
+    const heliosPath = vscode.workspace.getConfiguration('helios').get<string>('path');
+    if (heliosPath) { configuration.heliosPath = heliosPath; }
 
     ctx.subscriptions.push(
-        vscode.languages.setLanguageConfiguration('koi', {
+        vscode.languages.setLanguageConfiguration('helios', {
             onEnterRules: [
                 {
                     beforeText: /^\s*-{2}\|/,
@@ -34,7 +34,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
 
-    client = new KoiLSClient(configuration);
+    client = new HLSClient(configuration);
     client.start();
 }
 
@@ -43,6 +43,6 @@ export async function deactivate() {
 }
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
-    if (document.languageId !== 'koi') { return; }
+    if (document.languageId !== 'helios') { return; }
     console.log(`Opened ${document.uri}`);
 }

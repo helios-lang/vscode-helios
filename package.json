@@ -1,8 +1,8 @@
 {
-  "name": "koi",
-  "displayName": "Koi",
-  "publisher": "koi-lang",
-  "description": "Koi language support for Visual Studio Code",
+  "name": "helios",
+  "displayName": "Helios",
+  "publisher": "helios-lang",
+  "description": "Helios language support for Visual Studio Code",
   "license": "MIT",
   "version": "0.0.1",
   "engines": {
@@ -18,41 +18,42 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:koi"
+    "onLanguage:helios"
   ],
   "main": "./out/extension",
   "contributes": {
     "languages": [
       {
-        "id": "koi",
+        "id": "helios",
         "aliases": [
-          "Koi",
-          "koi"
+          "Helios",
+          "helios"
         ],
         "extensions": [
-          ".koi"
+          ".he",
+          ".helios"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "koi",
-        "scopeName": "source.koi",
-        "path": "./syntaxes/koi.old.tmLanguage.json"
+        "language": "helios",
+        "scopeName": "source.helios",
+        "path": "./syntaxes/helios.tmLanguage.json"
       }
     ],
     "configuration": [
       {
-        "title": "koi",
+        "title": "helios",
         "properties": {
-          "koi.path": {
-            "description": "The path to the Koi executable",
+          "helios.path": {
+            "description": "Path to the Helios compiler executable",
             "type": "string",
-            "default": "$KOI_PATH"
+            "default": "$HELIOS_PATH"
           },
-          "koi.trace.server": {
-            "description": "Trace the communication between VSCode and KoiLS",
+          "helios.trace.server": {
+            "description": "Trace communication between VSCode and HLS",
             "scope": "window",
             "type": "string",
             "enum": ["off", "messages", "verbose"],
@@ -63,8 +64,8 @@
     ],
     "snippets": [
       {
-        "language": "koi",
-        "path": "./snippets/koi.json"
+        "language": "helios",
+        "path": "./snippets/helios.json"
       }
     ]
   },

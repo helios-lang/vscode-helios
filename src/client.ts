@@ -2,7 +2,7 @@ import * as lc from 'vscode-languageclient';
 import * as vscode from 'vscode';
 import { Configuration } from './extension';
 
-export default class KoiLSClient {
+export default class HLSClient {
     private languageClient: lc.LanguageClient | undefined;
     private configuration: Configuration;
     private disposables: vscode.Disposable[];
@@ -15,7 +15,7 @@ export default class KoiLSClient {
 
     public start() {
         let serverOptions: lc.Executable = {
-            command: this.configuration.koiPath,
+            command: this.configuration.heliosPath,
             args: ['ide'],
             options: {
                 env: { RUST_BACKTRACE: 1, RUST_LOG: "koi=trace" },
@@ -24,32 +24,30 @@ export default class KoiLSClient {
 
         let clientOptions: lc.LanguageClientOptions = {
             documentSelector: [
-                { scheme: 'file', language: 'koi' },
-                { scheme: 'untitled', language: 'koi' }
+                { scheme: 'file', language: 'helios' },
+                { scheme: 'untitled', language: 'helios' }
             ]
         };
 
         this.languageClient = new lc.LanguageClient(
-            'KoiLS',
-            'Koi Language Server',
+            'HLS',
+            'Helios Language Server',
             serverOptions,
             clientOptions
         );
 
         this.registerCommands();
-
         this.disposables.push(this.languageClient.start());
-        // vscode.window.showInformationMessage('Started KoiLS');
     }
 
     private registerCommands() {
-        this.disposables.push(vscode.commands.registerCommand('koils.run', () => {
-            vscode.window.showInformationMessage('KoiLS: Run');
+        this.disposables.push(vscode.commands.registerCommand('hls.run', () => {
+            vscode.window.showInformationMessage('HLS: Run');
         }));
     }
 
     public async stop() {
-        // vscode.window.showInformationMessage('Stopping KoiLS...');
+        // vscode.window.showInformationMessage('Stopping HLS...');
         await this.languageClient?.stop();
         this.disposables.forEach(disposable => disposable.dispose());
     }

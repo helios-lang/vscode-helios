@@ -1,9 +1,10 @@
-# Koi for Visual Studio Code
+# Helios for Visual Studio Code
 
-This extension adds language support for the Koi programming language to VSCode.
+This extension adds language support for the Helios programming language to
+VSCode.
 
-Currently, it provides syntax-highlighting support for `.koi` files. A language
-server for Koi (KoiLS) is under development. You can check it out
-[here][github:koi-lang].
+Currently, it provides syntax-highlighting support for `.he` files. A language
+server for Helios (HLS), included as part of the compiler, is under development.
+You can check it out [here][github:helios-lang].
 
-[github:koi-lang]: https://github.com/tahscenery/koi
+[github:helios-lang]: https://github.com/tahscenery/koi
