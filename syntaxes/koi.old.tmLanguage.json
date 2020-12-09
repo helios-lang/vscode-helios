@@ -25,6 +25,12 @@
         { "include": "#comment-line" },
         { "include": "#comment-block-documentation" },
         { "include": "#comment-block" },
+
+        { "include": "#comment-line-alt-documentation" },
+        { "include": "#comment-line-alt" },
+        { "include": "#comment-block-alt-documentation" },
+        { "include": "#comment-block-alt" },
+
         { "include": "#shebang" }
       ]
     },
@@ -36,6 +42,16 @@
     "comment-line-documentation": {
       "name": "comment.line.documentation.koi",
       "begin": "/{2}(/|!)",
+      "end": "\n"
+    },
+    "comment-line-alt": {
+      "name": "comment.line.koi",
+      "begin": "-{2}(?!(-|\\|))",
+      "end": "\n"
+    },
+    "comment-line-alt-documentation": {
+      "name": "comment.line.documentation.koi",
+      "begin": "-{2}(-|\\|)",
       "end": "\n"
     },
     "comment-block": {
@@ -52,6 +68,22 @@
       "end": "\\|\\1}",
       "patterns": [
         { "include": "#comment-block" }
+      ]
+    },
+    "comment-block-alt": {
+      "name": "comment.block.koi",
+      "begin": "\\(\\*(?!\\*|\\))",
+      "end": "\\*\\)",
+      "patterns": [
+        { "include": "#comment-block-alt" }
+      ]
+    },
+    "comment-block-alt-documentation": {
+      "name": "comment.block.documentation.koi",
+      "begin": "\\(\\*{2}(?!\\))",
+      "end": "\\*\\)",
+      "patterns": [
+        { "include": "#comment-block-alt" }
       ]
     },
     "shebang": {
@@ -116,11 +148,11 @@
     },
     "keyword-common": {
       "name": "keyword.other.koi",
-      "match": "(?<![[:word:].:`])(?:case|const|enum|extend|fun(ction)?|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|pub(lic)?[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|(sub|new)?type|using|var|(exports?|exposing|import|then|continue|repeat|break|yield|expect|interface|default|instance|val|class|do|end))(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:case|const|enum|extend|fun(ction)?|import|internal[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|let|macro|module|pub(lic)?[ \t]*(\\([ \t]*(?:get|set)(?:[ \t]*;[ \t]*(?:get|set))?[ \t]*\\))?|struct|trait|type|var|(continue|repeat|break|yield|expect|interface|do|instance|default|then|begin|end|forall|val|export))(?![[:word:]])"
     },
     "keyword-structure": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:`])(?:_|and|as|catch|else|external|for|if|in|is|match|not|of|operator[ \t]*(\\((?:pre|in|post)fix\\))?|or|ref|return|self|super|take|try|where|while|with)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:_|and|as|catch|else|external|for|if|in|is|loop|match|not|of|operator[ \t]*(\\((?:pre|in|post)fix\\))?|or|ref|return|self|super|take|try|where|while|with)(?![[:word:]])"
     },
     "keyword-miscellaneous": {
       "name": "keyword.control.koi keyword.other.koi",
@@ -136,7 +168,7 @@
       "patterns": [
         { "include": "#literal-boolean" },
         { "include": "#literal-constructor" },
-        { "include": "#literal-character" },
+        { "--include": "#literal-character" },
         { "include": "#literal-number" },
         { "include": "#literal-string" }
       ]
@@ -269,8 +301,9 @@
 
     "entity": {
       "patterns": [
-        { "include": "#entity-function-binding" },
-        { "include": "#entity-function-invocation" },
+        { "--include": "#entity-function-binding" },
+        { "--include": "#entity-function-invocation" },
+        { "include": "#entity-module-invocation" },
         { "include": "#entity-type-binding" },
         { "include": "#entity-variable-binding" }
       ]
@@ -289,11 +322,17 @@
       "match": "(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W))",
       "--match": "(#?[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W)|{(?:.|\\s)*case|{.*=>)"
     },
-    "entity-type-binding": {
-      "match": "(?<=class|extend|interface|instance|module|trait|type)\\s+([_[:alpha:]][[:word:]]*)",
-      "--match": "(?:(?<!#)(?:const|extend|module|trait|type))\\s+(#?[_[:alpha:]][[:word:]]*)",
+    "entity-module-invocation": {
+      "match": "(?<=module)\\s+([_[:alpha:]][[:word:]]*)",
       "captures": {
         "1": { "name": "entity.name.type" }
+      }
+    },
+    "entity-type-binding": {
+      "match": "(?<=type)\\s+(?:(alias)\\s+)?([_[:alpha:]][[:word:]]*)",
+      "captures": {
+        "1": { "name": "keyword.other.koi" },
+        "2": { "name": "entity.name.type" }
       }
     },
     "entity-variable-binding": {

@@ -16,6 +16,10 @@ export function activate(ctx: vscode.ExtensionContext) {
         vscode.languages.setLanguageConfiguration('koi', {
             onEnterRules: [
                 {
+                    beforeText: /^\s*-{2}\|/,
+                    action: { indentAction: vscode.IndentAction.None, appendText: '--| ' },
+                },
+                {
                     beforeText: /^\s*\/{3}/,
                     action: { indentAction: vscode.IndentAction.None, appendText: '/// ' },
                 },
@@ -40,5 +44,5 @@ export async function deactivate() {
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
     if (document.languageId !== 'koi') { return; }
-    console.log(`Opened document: ${document.uri}`);
+    console.log(`Opened ${document.uri}`);
 }
