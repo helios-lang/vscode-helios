@@ -1,74 +1,55 @@
 {
-  "Else branch": {
-    "prefix": ["else"],
-    "body": [
-      "else {",
-      "\t${0:expr}",
-      "}"
-    ]
-  },
-  "For loop": {
-    "prefix": ["for"],
-    "body": [
-      "for ${1:element} in ${2:collection} {",
-      "\t${0:expr}",
-      "}"
-    ]
-  },
-  "Function": {
-    "prefix": ["function"],
-    "body": [
-      "function ${1:my_function}(${2:params}): ${3:Return_Type} {",
-      "\t${0:???}",
-      "}"
-    ]
-  },
   "If expression": {
-    "prefix": ["if"],
+    "prefix": [
+      "if"
+    ],
     "body": [
-      "if ${1:expr} {",
-      "\t${0:???}",
-      "}"
+      "if ${1:expr} then",
+      "\t${2:???}",
+      "else",
+      "\t${0:???}"
     ]
   },
-  "If-let expression": {
-    "prefix": ["if-let"],
-    "body": [
-      "if let ${1:pattern} = ${2:expr} {",
-      "\t${0:???}",
-      "}"
-    ]
+  "Let (global) binding": {
+    "prefix": [
+      "let"
+    ],
+    "body": "let ${1:ident} = ${0:???}"
   },
-  "Let binding": {
-    "prefix": ["let"],
-    "body": "let ${1:ident} = ${0:expr}"
+  "Let (local) binding": {
+    "prefix": [
+      "let-in"
+    ],
+    "body": [
+      "let ${1:ident} = ${2:???} in",
+      "${0:???}"
+    ]
   },
   "Match clause": {
-    "prefix": ["match"],
+    "prefix": [
+      "match"
+    ],
     "body": [
-      "match ${1:expr} {",
-      "\t| ${2:pattern} => ${0:expr}",
-      "}"
+      "match ${1:expr} with",
+      "| ${2:pattern} -> ${0:expr}"
     ]
   },
   "Type declaration": {
-    "prefix": ["type"],
-    "body": "type ${1:MyType} = ${0:???}"
+    "prefix": [
+      "type"
+    ],
+    "body": "type ${1:t} = ${0:()}"
   },
   "Type-alias declaration": {
-    "prefix": ["type-alias"],
-    "body": "type alias ${1:MyType} = ${0:???}"
+    "prefix": [
+      "type-alias"
+    ],
+    "body": "type alias ${1:t} = ${0:()}"
   },
-  "Var binding": {
-    "prefix": ["var"],
-    "body": "var ${1:ident} = ${0:expr}"
-  },
-  "While loop": {
-    "prefix": ["while"],
-    "body": [
-      "while ${1:expr} {",
-      "\t${0:expr}",
-      "}"
-    ]
+  "Val declaration": {
+    "prefix": [
+      "val"
+    ],
+    "body": "val ${1:ident} : ${0:???}"
   }
 }
