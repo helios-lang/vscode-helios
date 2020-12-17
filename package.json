@@ -51,7 +51,7 @@
           "helios.path": {
             "description": "Path to the Helios compiler executable",
             "type": "string",
-            "default": "$HELIOS"
+            "default": "helios"
           },
           "helios.trace.server": {
             "description": "Trace communication between VSCode and HLS",

@@ -1,4 +1,14 @@
 {
+  "Begin-End block": {
+    "prefix": [
+      "begin"
+    ],
+    "body": [
+      "begin",
+      "\t${0:???}",
+      "end"
+    ]
+  },
   "If expression": {
     "prefix": [
       "if"
