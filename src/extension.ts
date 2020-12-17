@@ -6,7 +6,7 @@ let client: HLSClient;
 export function activate(ctx: vs.ExtensionContext) {
     let workspaceConfig = vs.workspace.getConfiguration("helios");
     const config: HLSConfiguration = {
-        heliosPath: workspaceConfig.get("path") || "$HELIOS_PATH",
+        heliosPath: workspaceConfig.get("path") || "$HELIOS",
     };
 
     ctx.subscriptions.push(

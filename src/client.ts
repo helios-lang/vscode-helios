@@ -40,7 +40,7 @@ export default class HLSClient {
             command: this.configuration.heliosPath,
             args: ["ide"],
             options: {
-                env: { RUST_BACKTRACE: 1, RUST_LOG: "koi=trace" },
+                env: { RUST_BACKTRACE: 1, RUST_LOG: "helios=trace" },
             },
         };
 

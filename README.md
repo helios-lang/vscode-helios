@@ -7,4 +7,4 @@ Currently, it provides syntax-highlighting support for `.he` files. A language
 server for Helios (HLS), included as part of the compiler, is under development.
 You can check it out [here][github:helios-lang].
 
-[github:helios-lang]: https://github.com/tahscenery/helios
+[github:helios-lang]: https://github.com/helios-lang/helios

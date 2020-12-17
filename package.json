@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tahscenery/vscode-helios.git"
+    "url": "https://github.com/helios/vscode-helios.git"
   },
   "categories": [
     "Programming Languages",
@@ -51,7 +51,7 @@
           "helios.path": {
             "description": "Path to the Helios compiler executable",
             "type": "string",
-            "default": "$HELIOS_PATH"
+            "default": "$HELIOS"
           },
           "helios.trace.server": {
             "description": "Trace communication between VSCode and HLS",
