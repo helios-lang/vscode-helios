@@ -28,32 +28,15 @@ export async function activate(context: vs.ExtensionContext) {
         context.subscriptions.push(disposable);
     }
 
+
     try {
-        const serverPath = await utils.getServerPath();
-
-        let serverOptions: lc.ServerOptions = {
-            command: serverPath,
-            transport: lc.TransportKind.stdio,
-            options: {
-                env: { RUST_BACKTRACE: 1, RUST_LOG: "helios_ls=trace" },
-            },
-        };
-
-        let clientOptions: lc.LanguageClientOptions = {
-            documentSelector: [
-                { scheme: "file", language: "helios" },
-                { scheme: "untitled", language: "helios" },
-            ],
-        };
-
-        client = new lc.LanguageClient(
-            "helios-ls",
-            "Helios Language Server",
-            serverOptions,
-            clientOptions
-        );
-
+        let client = await createLanguageClient();
         context.subscriptions.push(client.start());
+
+        const status = vs.window.createStatusBarItem(vs.StatusBarAlignment.Left);
+        status.text = "$(check) Helios: Ready";
+        status.tooltip = "Ready for tasks";
+        status.show();
     } catch (error) {
         if (error === "HELIOS_ABORT" || error === "HELIOS_CANCEL") {
             context.subscriptions.forEach(disposable => disposable.dispose());
@@ -74,6 +57,42 @@ export async function activate(context: vs.ExtensionContext) {
 }
 
 /**
+ * Creates a new language client and establishes the client and server.
+ */
+async function createLanguageClient(): Promise<lc.LanguageClient> {
+    const serverPath = await utils.getServerPath();
+
+    let serverOptions: lc.ServerOptions = {
+        run: {
+            command: serverPath,
+        },
+        debug: {
+            command: serverPath,
+            options: {
+                env: {
+                    RUST_BACKTRACE: 1,
+                    RUST_LOG: "helios_ls=trace",
+                },
+            },
+        },
+    };
+
+    let clientOptions: lc.LanguageClientOptions = {
+        documentSelector: [
+            { scheme: "file", language: "helios" },
+            { scheme: "untitled", language: "helios" },
+        ],
+    };
+
+    return new lc.LanguageClient(
+        "helios-ls",
+        "Helios Language Server",
+        serverOptions,
+        clientOptions
+    );
+}
+
+/**
  * This function is called when the extension is deactivated.
  */
 export async function deactivate() {
@@ -81,15 +100,3 @@ export async function deactivate() {
         await client.stop();
     }
 }
-
-// /**
-//  * Handler for when a document in the workspace is opened.
-//  * @param document The opened text document.
-//  */
-// function onDidOpenTextDocument(document: vs.TextDocument) {
-//     if (document.languageId !== "helios") {
-//         return;
-//     }
-
-//     console.log(`Opened ${document.uri}`);
-// }
