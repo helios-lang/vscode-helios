@@ -1,55 +1,77 @@
+import * as commands from "./commands";
+import * as lc from "vscode-languageclient";
+import * as utils from "./utils";
 import * as vs from "vscode";
-import HLSClient, { HLSConfiguration } from "./client";
 
-let client: HLSClient;
+let client: lc.LanguageClient;
 
-export function activate(context: vs.ExtensionContext) {
-    let workspaceConfig = vs.workspace.getConfiguration("helios");
-    const config: HLSConfiguration = {
-        heliosPath: workspaceConfig.get("path") || "helios",
+type Callback = (...args: any[]) => any;
+type Commands = { [key: string]: Callback };
+
+/** Recognised commands for this extension. */
+const cmds: Commands = {
+    "helios.showSyntaxTree": commands.showSyntaxTree,
+    "helios.version": commands.showVersion,
+    "helios.restartServer": commands.restartServer,
+};
+
+/**
+ * This function is called when the extension is activated.
+ * @param context The extension context.
+ */
+export async function activate(context: vs.ExtensionContext) {
+    console.log("Activating extension...");
+    const status = vs.window.createStatusBarItem(vs.StatusBarAlignment.Left);
+
+    for (const cmd in cmds) {
+        const handler = cmds[cmd];
+        const disposable = vs.commands.registerCommand(cmd, handler);
+        context.subscriptions.push(disposable);
+    }
+
+    const serverPath = await utils.getServerPath();
+
+    let serverOptions: lc.ServerOptions = {
+        command: serverPath,
+        transport: lc.TransportKind.stdio,
+        options: {
+            env: { RUST_BACKTRACE: 1, RUST_LOG: "helios_ls=trace" },
+        },
     };
 
-    context.subscriptions.push(
-        vs.languages.setLanguageConfiguration("helios", {
-            onEnterRules: [
-                {
-                    beforeText: /^\s*-{2}\|/,
-                    action: {
-                        indentAction: vs.IndentAction.None,
-                        appendText: "--| ",
-                    },
-                },
-                // {
-                //     beforeText: /^\s*\/{3}/,
-                //     action: {
-                //         indentAction: vs.IndentAction.None,
-                //         appendText: "/// ",
-                //     },
-                // },
-            ],
-        })
+    let clientOptions: lc.LanguageClientOptions = {
+        documentSelector: [
+            { scheme: "file", language: "helios" },
+            { scheme: "untitled", language: "helios" },
+        ],
+    };
+
+    client = new lc.LanguageClient(
+        "helios-ls",
+        "Helios Language Server",
+        serverOptions,
+        clientOptions
     );
 
-    context.subscriptions.push(
-        vs.commands.registerCommand("hls.showSyntaxTree", () => {
-            vs.window.showInformationMessage("HLS: Show Syntax Tree");
-        })
-    );
-
-    vs.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
-
-    client = new HLSClient(config);
-    client.start();
+    status.dispose();
+    context.subscriptions.push(client.start());
 }
 
+/**
+ * This function is called when the extension is deactivated.
+ */
 export async function deactivate() {
     await client.stop();
 }
 
-function onDidOpenTextDocument(document: vs.TextDocument) {
-    if (document.languageId !== "helios") {
-        return;
-    }
+// /**
+//  * Handler for when a document in the workspace is opened.
+//  * @param document The opened text document.
+//  */
+// function onDidOpenTextDocument(document: vs.TextDocument) {
+//     if (document.languageId !== "helios") {
+//         return;
+//     }
 
-    console.log(`Opened ${document.uri}`);
-}
+//     console.log(`Opened ${document.uri}`);
+// }

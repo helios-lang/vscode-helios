@@ -3,6 +3,7 @@
   "displayName": "Helios",
   "publisher": "helios-lang",
   "description": "Helios language support for Visual Studio Code",
+  "icon": "assets/icon.png",
   "license": "MIT",
   "version": "0.2.0",
   "engines": {
@@ -18,7 +19,8 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:helios"
+    "onLanguage:helios",
+    "onCommand:helios.restartServer"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -26,13 +28,8 @@
       {
         "title": "helios",
         "properties": {
-          "helios.path": {
-            "description": "Path to the Helios compiler executable",
-            "type": "string",
-            "default": "helios"
-          },
           "helios.trace.server": {
-            "description": "Trace communication between VSCode and HLS",
+            "description": "Trace communication between VSCode and the Helios language server.",
             "scope": "window",
             "type": "string",
             "enum": [
@@ -41,14 +38,28 @@
               "verbose"
             ],
             "default": "off"
+          },
+          "helios.enable": {
+            "description": "Enables the Helios language server. Requires a restart when changed.",
+            "type": "boolean",
+            "default": true
+          },
+          "helios.serverPath": {
+            "description": "Absolute path to the Helios language server executable. Requires a restart when changed.",
+            "type": "string",
+            "default": ""
           }
         }
       }
     ],
     "commands": [
       {
-        "title": "HLS: Show Syntax Tree",
-        "command": "hls.showSyntaxTree"
+        "title": "Helios: Show Syntax Tree",
+        "command": "helios.showSyntaxTree"
+      },
+      {
+        "title": "Helios: Show Version",
+        "command": "helios.version"
       }
     ],
     "grammars": [
@@ -88,12 +99,14 @@
     "pretest": "yarn run build && yarn run lint"
   },
   "dependencies": {
-    "vscode-languageclient": "^6.1.3"
+    "vscode-languageclient": "^6.1.3",
+    "which": "^2.0.2"
   },
   "devDependencies": {
     "@types/glob": "^7.1.2",
     "@types/node": "^14.0.11",
     "@types/vscode": "^1.45.1",
+    "@types/which": "^1.3.2",
     "prettier": "2.2.1",
     "typescript": "^3.9.5",
     "vscode-test": "^1.4.0"
