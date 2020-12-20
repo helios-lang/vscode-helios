@@ -22,28 +22,6 @@
   ],
   "main": "./out/extension",
   "contributes": {
-    "languages": [
-      {
-        "id": "helios",
-        "aliases": [
-          "Helios",
-          "helios"
-        ],
-        "extensions": [
-          ".he",
-          ".hel",
-          ".helios"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "helios",
-        "scopeName": "source.helios",
-        "path": "./syntaxes/koi.tmLanguage.json"
-      }
-    ],
     "configuration": [
       {
         "title": "helios",
@@ -65,6 +43,34 @@
             "default": "off"
           }
         }
+      }
+    ],
+    "commands": [
+      {
+        "title": "HLS: Show Syntax Tree",
+        "command": "hls.showSyntaxTree"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "helios",
+        "scopeName": "source.helios",
+        "path": "./syntaxes/koi.tmLanguage.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "helios",
+        "aliases": [
+          "Helios",
+          "helios"
+        ],
+        "extensions": [
+          ".he",
+          ".hel",
+          ".helios"
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "snippets": [

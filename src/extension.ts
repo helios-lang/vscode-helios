@@ -3,13 +3,13 @@ import HLSClient, { HLSConfiguration } from "./client";
 
 let client: HLSClient;
 
-export function activate(ctx: vs.ExtensionContext) {
+export function activate(context: vs.ExtensionContext) {
     let workspaceConfig = vs.workspace.getConfiguration("helios");
     const config: HLSConfiguration = {
         heliosPath: workspaceConfig.get("path") || "helios",
     };
 
-    ctx.subscriptions.push(
+    context.subscriptions.push(
         vs.languages.setLanguageConfiguration("helios", {
             onEnterRules: [
                 {
@@ -19,22 +19,20 @@ export function activate(ctx: vs.ExtensionContext) {
                         appendText: "--| ",
                     },
                 },
-                {
-                    beforeText: /^\s*\/{3}/,
-                    action: {
-                        indentAction: vs.IndentAction.None,
-                        appendText: "/// ",
-                    },
-                },
-                {
-                    beforeText: /^\s*\/{2}!/,
-                    action: {
-                        indentAction: vs.IndentAction.None,
-                        appendText: "//! ",
-                    },
-                },
+                // {
+                //     beforeText: /^\s*\/{3}/,
+                //     action: {
+                //         indentAction: vs.IndentAction.None,
+                //         appendText: "/// ",
+                //     },
+                // },
             ],
-            wordPattern: /(-?(?:\d+(?:\.\d+)?|\.\d+)\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+        })
+    );
+
+    context.subscriptions.push(
+        vs.commands.registerCommand("hls.showSyntaxTree", () => {
+            vs.window.showInformationMessage("HLS: Show Syntax Tree");
         })
     );
 

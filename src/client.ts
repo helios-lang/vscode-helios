@@ -58,16 +58,7 @@ export default class HLSClient {
             clientOptions
         );
 
-        this.registerCommands();
         this.disposables.push(this.languageClient.start());
-    }
-
-    private registerCommands() {
-        this.disposables.push(
-            vs.commands.registerCommand("hls.run", () => {
-                vs.window.showInformationMessage("HLS: Run");
-            })
-        );
     }
 
     /**
