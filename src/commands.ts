@@ -6,20 +6,20 @@ import { State } from "./state";
 /**
  * Shows the syntax tree of the current file.
  */
-export async function showSyntaxTree(_: State) {
+export function showSyntaxTree(_: State) {
     vs.window.showInformationMessage("Not yet implemented.");
 }
 
 /**
  * Shows the current version of the language server.
  */
-export async function showVersion(state: State) {
+export function showVersion(state: State) {
     state.setStatus("loading", "Retrieving version...");
-    const res = spawnSync(state.serverPath, ["--version"], {
+    const response = spawnSync(state.serverPath, ["--version"], {
         encoding: "utf8",
     });
 
-    state.setStatus("ready");
-    const version = res.stdout.slice("helios-ls ".length).trim();
+    const version = response.stdout.slice("helios-ls ".length).trim();
     vs.window.showInformationMessage(`Helios-LS ${version}`);
+    state.setStatus("ready");
 }

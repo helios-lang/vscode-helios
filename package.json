@@ -19,8 +19,7 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:helios",
-    "onCommand:helios.restartServer"
+    "onLanguage:helios"
   ],
   "main": "./out/extension",
   "contributes": {
