@@ -60,6 +60,10 @@
       {
         "title": "Helios: Show Version",
         "command": "helios.version"
+      },
+      {
+        "title": "Helios: Restart Server",
+        "command": "helios.restartServer"
       }
     ],
     "grammars": [
