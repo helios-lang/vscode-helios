@@ -1,19 +1,19 @@
 import { spawnSync } from "child_process";
 import * as vs from "vscode";
 
-import { HeliosState } from "./state";
+import { State } from "./state";
 
 /**
  * Shows the syntax tree of the current file.
  */
-export async function showSyntaxTree(_: HeliosState) {
+export async function showSyntaxTree(_: State) {
     vs.window.showInformationMessage("Not yet implemented.");
 }
 
 /**
  * Shows the current version of the language server.
  */
-export async function showVersion(state: HeliosState) {
+export async function showVersion(state: State) {
     state.setStatus("loading", "Retrieving version...");
     const res = spawnSync(state.serverPath, ["--version"], {
         encoding: "utf8",

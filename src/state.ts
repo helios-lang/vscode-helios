@@ -1,16 +1,28 @@
 import * as vs from "vscode";
 import * as lc from "vscode-languageclient";
 
-export type Callback = (state: HeliosState) => void;
+/**
+ * The type of a recognized callback to be invoked when a command is executed.
+ */
+export type Callback = (state: State) => void;
 
+/**
+ * The current status of the language server (which will be displayed in the
+ * editor window's status bar).
+ */
 export type Status = "loading" | "ready" | "error";
 
-export class HeliosState {
+/**
+ * Representation of the current state of the extension. It holds references to
+ * information used commonly throughout the client such as the path to the
+ * language server or the status bar item in the editor window.
+ */
+export class State {
     private constructor(
         private readonly context: vs.ExtensionContext,
         readonly serverPath: string,
         readonly client: lc.LanguageClient,
-        private readonly statusBar: vs.StatusBarItem
+        private readonly status: vs.StatusBarItem
     ) {}
 
     /**
@@ -29,24 +41,19 @@ export class HeliosState {
         context: vs.ExtensionContext,
         serverPath: string,
         client: lc.LanguageClient
-    ): Promise<HeliosState> {
-        const statusBar = vs.window.createStatusBarItem(
-            vs.StatusBarAlignment.Left
-        );
-        statusBar.text = "$(check) Helios-LS: Ready";
-        statusBar.tooltip = "Helios-LS is ready for tasks";
-        statusBar.show();
+    ): Promise<State> {
+        const alignment = vs.StatusBarAlignment.Left;
+        const status = vs.window.createStatusBarItem(alignment);
+        status.text = "$(check) Helios-LS: Ready";
+        status.tooltip = "Helios-LS is ready for tasks";
+        status.show();
 
-        const state = new HeliosState(context, serverPath, client, statusBar);
+        const state = new State(context, serverPath, client, status);
         state.pushDisposable(client.start());
-        state.pushDisposable(statusBar);
+        state.pushDisposable(status);
 
         await client.onReady();
         return state;
-    }
-
-    public get subscriptions(): vs.Disposable[] {
-        return this.context.subscriptions;
     }
 
     /**
@@ -69,21 +76,22 @@ export class HeliosState {
      * @param message An optional message.
      */
     public setStatus(status: Status, message: string | undefined = undefined) {
+        const name = "Helios-LS";
         switch (status) {
             case "ready":
                 var message_ = message || "Ready";
-                this.statusBar.text = `$(check) Helios-LS: ${message_}`;
-                this.statusBar.tooltip = "Helios-LS is ready for tasks";
+                this.status.text = `$(check) ${name}: ${message_}`;
+                this.status.tooltip = "Helios-LS is ready for tasks";
                 break;
             case "loading":
                 var message_ = message || "Loading...";
-                this.statusBar.text = `$(sync~spin) Helios-LS: ${message_}`;
-                this.statusBar.tooltip = "Helios-LS is busy";
+                this.status.text = `$(sync~spin) ${name}: ${message_}`;
+                this.status.tooltip = "Helios-LS is busy";
                 break;
             case "error":
                 var message_ = message || "Error";
-                this.statusBar.text = `$(error) Helios-LS: ${message_}`;
-                this.statusBar.tooltip = "Helios-LS has encountered an error";
+                this.status.text = `$(error) ${name}: ${message_}`;
+                this.status.tooltip = "Helios-LS has encountered an error";
                 break;
         }
     }

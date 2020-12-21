@@ -2,10 +2,10 @@ import * as lc from "vscode-languageclient";
 import * as vs from "vscode";
 
 import * as commands from "./commands";
-import { Callback, HeliosState } from "./state";
+import { Callback, State } from "./state";
 import { getServerPath } from "./utils";
 
-let state: HeliosState | undefined;
+let state: State | undefined;
 
 /**
  * Recognised commands for this extension.
@@ -24,7 +24,7 @@ export async function activate(context: vs.ExtensionContext) {
     try {
         const serverPath = await getServerPath();
         let client = createLanguageClient(serverPath);
-        state = await HeliosState.activate(context, serverPath, client);
+        state = await State.activate(context, serverPath, client);
 
         // Register command to restart server
         state.registerCommand("helios.restartServer", async _ => {
@@ -43,7 +43,7 @@ export async function activate(context: vs.ExtensionContext) {
             await cleanUpAndDeactivate(context);
         } else if (error === "HELIOS_NO_EXECUTABLE_FOUND") {
             vs.window.showErrorMessage(
-                "Failed to find the Helios language server executable. You may not have it installed on your system."
+                "Failed to find the Helios-LS executable. You may not have it installed on your system."
             );
             await cleanUpAndDeactivate(context);
         } else {
@@ -81,7 +81,7 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
 
     return new lc.LanguageClient(
         "helios-ls",
-        "Helios Language Server",
+        "Helios-LS",
         serverOptions,
         clientOptions
     );
