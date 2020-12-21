@@ -1,7 +1,7 @@
-import * as vs from "vscode";
 import * as fs from "fs";
-import * as p from "path";
+import * as vs from "vscode";
 import which = require("which");
+import { basename } from "path";
 
 const HELIOS_LS_EXECUTABLE = "helios-ls";
 
@@ -10,7 +10,7 @@ const HELIOS_LS_EXECUTABLE = "helios-ls";
  */
 export async function getServerPath(): Promise<string> {
     const config = vs.workspace.getConfiguration("helios");
-    let serverPath = config.serverPath;
+    let serverPath = config.get<string>("serverPath") || "";
 
     if (!(await isPathValid(serverPath))) {
         let response = await vs.window.showInformationMessage(
@@ -45,14 +45,15 @@ export async function getServerPath(): Promise<string> {
 
 /**
  * Determines if the given path is valid.
+ *
  * @param path The path to check.
  */
-async function isPathValid(path: string | undefined): Promise<boolean> {
-    if (!path || path === "") {
+async function isPathValid(path: string): Promise<boolean> {
+    if (path === "") {
         return Promise.resolve(false);
     } else {
         const checkIfValid = (stats: fs.Stats) => {
-            return stats.isFile() && p.basename(path) === HELIOS_LS_EXECUTABLE;
+            return stats.isFile() && basename(path) === HELIOS_LS_EXECUTABLE;
         };
         return await fs.promises
             .stat(path)
@@ -64,16 +65,16 @@ async function isPathValid(path: string | undefined): Promise<boolean> {
 /**
  * Attempts to locate the executable of the Helios language server.
  *
- * This function will check if the Helios language server is in the PATH. If it
- * isn't found, then that means either the user doesn't have it installed, or
- * they have placed it in some arbitrary location (in which case, they should
+ * This function will check if the `helios-ls` executable is in the PATH. If it
+ * isn't found, that means either the user doesn't have it installed or they
+ * may have placed it in some arbitrary location (in which case, they should
  * manually set it in the `helios.serverPath` configuration).
  */
 async function locateExecutable(): Promise<string> {
     return vs.window.withProgress(
         {
             location: vs.ProgressLocation.Notification,
-            title: "Locating Helios-LS executable...",
+            title: "Locating the Helios-LS executable...",
             cancellable: true,
         },
         async (_, token) => {

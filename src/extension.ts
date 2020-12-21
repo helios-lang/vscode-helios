@@ -75,7 +75,7 @@ async function onDidChangeConfiguration(event: vs.ConfigurationChangeEvent) {
     if (!changedOption) return;
 
     const response = await vs.window.showInformationMessage(
-        `Changing ${changedOption} requires a reload.`,
+        `Changing '${changedOption}' requires a reload.`,
         "Reload now"
     );
 
