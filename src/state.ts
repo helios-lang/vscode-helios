@@ -81,17 +81,17 @@ export class State {
             case "ready":
                 var message_ = message || "Ready";
                 this.status.text = `$(check) ${name}: ${message_}`;
-                this.status.tooltip = "Helios-LS is ready for tasks";
+                this.status.tooltip = `${name} is ready for tasks`;
                 break;
             case "loading":
                 var message_ = message || "Loading...";
                 this.status.text = `$(sync~spin) ${name}: ${message_}`;
-                this.status.tooltip = "Helios-LS is busy";
+                this.status.tooltip = `${name} is busy`;
                 break;
             case "error":
                 var message_ = message || "Error";
                 this.status.text = `$(error) ${name}: ${message_}`;
-                this.status.tooltip = "Helios-LS has encountered an error";
+                this.status.tooltip = `${name} has encountered an error`;
                 break;
         }
     }

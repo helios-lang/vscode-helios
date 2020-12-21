@@ -38,18 +38,49 @@ export async function activate(context: vs.ExtensionContext) {
             const handler = cmds[cmd];
             state.registerCommand(cmd, handler);
         }
+
+        // Detect changes to configuration
+        vs.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
     } catch (error) {
         if (error === "HELIOS_ABORT") {
             await cleanUpAndDeactivate(context);
         } else if (error === "HELIOS_NO_EXECUTABLE_FOUND") {
             vs.window.showErrorMessage(
-                "Failed to find the Helios-LS executable. You may not have it installed on your system."
+                "Unable to find the Helios-LS executable. \
+                 Is it installed correctly?"
             );
             await cleanUpAndDeactivate(context);
         } else {
             console.error(error);
             vs.window.showErrorMessage("An unexpected error occurred");
         }
+    }
+}
+
+const configsRequiringReload = ["helios.serverPath"];
+
+/**
+ * Handler for when the user has changed a configuration in the `settings.json`
+ * file. This function will only check Helios-specific options (such as the
+ * language server path).
+ *
+ * @param event The configuration change event.
+ */
+async function onDidChangeConfiguration(event: vs.ConfigurationChangeEvent) {
+    // Check if the changed option is one that requires a reload
+    const changedOption = configsRequiringReload.find(option =>
+        event.affectsConfiguration(option)
+    );
+
+    if (!changedOption) return;
+
+    const response = await vs.window.showInformationMessage(
+        `Changing ${changedOption} requires a reload.`,
+        "Reload now"
+    );
+
+    if (response === "Reload now") {
+        await vs.commands.executeCommand("workbench.action.reloadWindow");
     }
 }
 

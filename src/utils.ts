@@ -1,5 +1,6 @@
 import * as vs from "vscode";
 import * as fs from "fs";
+import * as p from "path";
 import which = require("which");
 
 const HELIOS_LS_EXECUTABLE = "helios-ls";
@@ -12,7 +13,7 @@ export async function getServerPath(): Promise<string> {
     let serverPath = config.serverPath;
 
     if (!(await isPathValid(serverPath))) {
-        let choice = await vs.window.showInformationMessage(
+        let response = await vs.window.showInformationMessage(
             serverPath === ""
                 ? "The path to the Helios-LS executable is not configured."
                 : "The configured path to the Helios-LS executable is invalid.",
@@ -20,15 +21,18 @@ export async function getServerPath(): Promise<string> {
             "Find it for me"
         );
 
-        if (choice === "Find it for me") {
+        if (response === "Find it for me") {
+            // We won't handle exceptions here
             serverPath = await locateExecutable();
-            let choice = await vs.window.showInformationMessage(
-                "Successfully found the Helios-LS executable. Would you like to update the configuration with its location?",
+
+            let response = await vs.window.showInformationMessage(
+                "Successfully found the Helios-LS executable. \
+                 Would you like to update the configuration with its location?",
                 "No",
                 "Yes"
             );
 
-            if (choice === "Yes") {
+            if (response === "Yes") {
                 config.update("serverPath", serverPath);
             }
         } else {
@@ -47,9 +51,12 @@ async function isPathValid(path: string | undefined): Promise<boolean> {
     if (!path || path === "") {
         return Promise.resolve(false);
     } else {
+        const checkIfValid = (stats: fs.Stats) => {
+            return stats.isFile() && p.basename(path) === HELIOS_LS_EXECUTABLE;
+        };
         return await fs.promises
             .stat(path)
-            .then(_ => true)
+            .then(checkIfValid)
             .catch(_ => false);
     }
 }
@@ -75,8 +82,8 @@ async function locateExecutable(): Promise<string> {
                 try {
                     const path = await which(HELIOS_LS_EXECUTABLE);
                     resolve(path);
-                } catch (_) {
-                    reject("NO_EXECUTABLE_FOUND");
+                } catch {
+                    reject("HELIOS_NO_EXECUTABLE_FOUND");
                 }
             });
         }
