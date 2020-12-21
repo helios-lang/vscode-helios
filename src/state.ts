@@ -51,21 +51,10 @@ export class State {
         const state = new State(context, serverPath, client, status);
         state.pushDisposable(client.start());
         state.pushDisposable(status);
+        state.setLanguageConfiguration();
 
         await client.onReady();
         return state;
-    }
-
-    /**
-     * Registers a new command to be associated with the extension.
-     *
-     * @param name The name of the command.
-     * @param callback A callback to call when the command is invoked.
-     */
-    public registerCommand(name: string, callback: Callback) {
-        const handler = () => callback(this);
-        const disposable = vs.commands.registerCommand(name, handler);
-        this.pushDisposable(disposable);
     }
 
     /**
@@ -94,6 +83,34 @@ export class State {
                 this.status.tooltip = `${name} has encountered an error`;
                 break;
         }
+    }
+
+    /**
+     * Registers a new command to be associated with the extension.
+     *
+     * @param name The name of the command.
+     * @param callback A callback to call when the command is invoked.
+     */
+    public registerCommand(name: string, callback: Callback) {
+        const handler = () => callback(this);
+        const disposable = vs.commands.registerCommand(name, handler);
+        this.pushDisposable(disposable);
+    }
+
+    private setLanguageConfiguration() {
+        const disposable = vs.languages.setLanguageConfiguration("helios", {
+            onEnterRules: [
+                {
+                    beforeText: /^\s*-{2}\|/,
+                    action: {
+                        indentAction: vs.IndentAction.None,
+                        appendText: "--| ",
+                    },
+                },
+            ],
+        });
+
+        this.pushDisposable(disposable);
     }
 
     private pushDisposable(disposable: vs.Disposable) {
