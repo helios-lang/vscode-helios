@@ -22,7 +22,7 @@ const cmds: { [key: string]: Callback } = {
  */
 export async function activate(context: vs.ExtensionContext) {
     try {
-        const serverPath = await getServerPath();
+        const serverPath = await getServerPath(context);
         let client = createLanguageClient(serverPath);
         state = await State.activate(context, serverPath, client);
 

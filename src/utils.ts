@@ -1,14 +1,18 @@
 import * as fs from "fs";
 import * as vs from "vscode";
 import which = require("which");
-import { basename } from "path";
+import { basename, join } from "path";
 
 const HELIOS_LS_EXECUTABLE = "helios-ls";
 
 /**
  * Attempts to get the path of the language server.
+ *
+ * @param context The extension context to get the global storage URI.
  */
-export async function getServerPath(): Promise<string> {
+export async function getServerPath(
+    context: vs.ExtensionContext
+): Promise<string> {
     const config = vs.workspace.getConfiguration("helios");
     let serverPath = config.get<string>("serverPath") || "";
 
@@ -23,7 +27,7 @@ export async function getServerPath(): Promise<string> {
 
         if (response === "Find it for me") {
             // We won't handle exceptions here
-            serverPath = await locateExecutable();
+            serverPath = await locateExecutable(context);
 
             let response = await vs.window.showInformationMessage(
                 "Successfully found the Helios-LS executable. \
@@ -65,28 +69,46 @@ async function isPathValid(path: string): Promise<boolean> {
 /**
  * Attempts to locate the executable of the Helios language server.
  *
- * This function will check if the `helios-ls` executable is in the PATH. If it
- * isn't found, that means either the user doesn't have it installed or they
- * may have placed it in some arbitrary location (in which case, they should
- * manually set it in the `helios.serverPath` configuration).
+ * This function will first search for the `helios-ls` executable in the
+ * extension's global storage path. If it doesn't find it there, it will then
+ * search for it in the PATH (using the [`which`] Node module).
+ *
+ * If neither of those operations succeed, that means either the user doesn't
+ * have it installed or they may have placed the executable in some arbitrary
+ * location (in which case, they should manually set it in the
+ * `helios.serverPath` configuration).
+ *
+ * [`which`]: https://www.npmjs.com/package/which
+ *
+ * @param context The extension context to get the global storage URI.
  */
-async function locateExecutable(): Promise<string> {
-    return vs.window.withProgress(
-        {
-            location: vs.ProgressLocation.Notification,
-            title: "Locating the Helios-LS executable...",
-            cancellable: true,
-        },
-        async (_, token) => {
-            return new Promise<string>(async (resolve, reject) => {
-                token.onCancellationRequested(() => reject("HELIOS_ABORT"));
-                try {
-                    const path = await which(HELIOS_LS_EXECUTABLE);
-                    resolve(path);
-                } catch {
-                    reject("HELIOS_NO_EXECUTABLE_FOUND");
+async function locateExecutable(context: vs.ExtensionContext): Promise<string> {
+    let globalStorageUri = context.globalStorageUri;
+    let executablePath = join(globalStorageUri.fsPath, HELIOS_LS_EXECUTABLE);
+
+    return await fs.promises
+        .stat(executablePath)
+        .then(_ => executablePath)
+        .catch(_ => {
+            return vs.window.withProgress(
+                {
+                    location: vs.ProgressLocation.Notification,
+                    title: "Locating the Helios-LS executable...",
+                    cancellable: true,
+                },
+                async (_, token) => {
+                    return new Promise<string>(async (resolve, reject) => {
+                        token.onCancellationRequested(() =>
+                            reject("HELIOS_ABORT")
+                        );
+                        try {
+                            const path = await which(HELIOS_LS_EXECUTABLE);
+                            resolve(path);
+                        } catch {
+                            reject("HELIOS_NO_EXECUTABLE_FOUND");
+                        }
+                    });
                 }
-            });
-        }
-    );
+            );
+        });
 }
