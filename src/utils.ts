@@ -2,6 +2,8 @@ import * as vs from "vscode";
 import * as fs from "fs";
 import which = require("which");
 
+const HELIOS_LS_EXECUTABLE = "helios-ls";
+
 /**
  * Attempts to get the path of the language server.
  */
@@ -12,16 +14,16 @@ export async function getServerPath(): Promise<string> {
     if (!(await isPathValid(serverPath))) {
         let choice = await vs.window.showInformationMessage(
             serverPath === ""
-                ? "The path to the Helios language server is not configured."
-                : "The configured path to the Helios language server is invalid.",
-            "Quit server",
+                ? "The path to the Helios-LS executable is not configured."
+                : "The configured path to the Helios-LS executable is invalid.",
+            "Quit extension",
             "Find it for me"
         );
 
         if (choice === "Find it for me") {
             serverPath = await locateExecutable();
             let choice = await vs.window.showInformationMessage(
-                "Successfully found the Helios language server executable. Would you like to update the configuration with its location?",
+                "Successfully found the Helios-LS executable. Would you like to update the configuration with its location?",
                 "No",
                 "Yes"
             );
@@ -30,7 +32,7 @@ export async function getServerPath(): Promise<string> {
                 config.update("serverPath", serverPath);
             }
         } else {
-            return Promise.reject("ABORT");
+            return Promise.reject("HELIOS_ABORT");
         }
     }
 
@@ -64,14 +66,14 @@ async function locateExecutable(): Promise<string> {
     return vs.window.withProgress(
         {
             location: vs.ProgressLocation.Notification,
-            title: "Locating Helios language server executable...",
+            title: "Locating Helios-LS executable...",
             cancellable: true,
         },
         async (_, token) => {
             return new Promise<string>(async (resolve, reject) => {
-                token.onCancellationRequested(() => reject("CANCEL"));
+                token.onCancellationRequested(() => reject("HELIOS_ABORT"));
                 try {
-                    const path = await which("helios-ls");
+                    const path = await which(HELIOS_LS_EXECUTABLE);
                     resolve(path);
                 } catch (_) {
                     reject("NO_EXECUTABLE_FOUND");
