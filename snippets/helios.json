@@ -1,4 +1,12 @@
 {
+  "Anonymous function": {
+    "prefix": [
+      "fun"
+    ],
+    "body": [
+      "fun ${1:???} -> ${0:???}"
+    ]
+  },
   "Begin-End block": {
     "prefix": [
       "begin"

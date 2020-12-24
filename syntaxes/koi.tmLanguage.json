@@ -42,7 +42,7 @@
       "begin": "\\(\\*(?!\\*|\\))\\s",
       "end": "\\*\\)",
       "patterns": [
-        { "include": "#comment-block-alt" }
+        { "include": "#comment-block" }
       ]
     },
     "shebang": {
