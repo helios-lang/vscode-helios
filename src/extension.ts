@@ -21,10 +21,16 @@ const cmds: { [key: string]: Callback } = {
  * @param eContext The extension context.
  */
 export async function activate(eContext: vs.ExtensionContext) {
+    const alignment = vs.StatusBarAlignment.Left;
+    const status = vs.window.createStatusBarItem(alignment);
+    status.text = "$(sync~spin) Helios-LS: Getting ready...";
+    status.tooltip = "Helios-LS is getting ready...";
+    status.show();
+
     try {
-        const serverPath = await getServerPath(eContext);
-        let client = createLanguageClient(serverPath);
-        hContext = await HeliosContext.activate(eContext, serverPath, client);
+        const path = await getServerPath(eContext);
+        const client = createLanguageClient(path);
+        hContext = await HeliosContext.activate(eContext, path, client, status);
 
         // Register command to restart server
         hContext.registerCommand("helios.restartServer", async _ => {
@@ -44,15 +50,23 @@ export async function activate(eContext: vs.ExtensionContext) {
     } catch (error) {
         if (error === "HELIOS_ABORT") {
             await cleanUpAndDeactivate(eContext);
+            status.hide();
         } else if (error === "HELIOS_NO_EXECUTABLE_FOUND") {
-            vs.window.showErrorMessage(
-                "Unable to find the Helios-LS executable. \
-                 Is it installed correctly?"
-            );
-            await cleanUpAndDeactivate(eContext);
+            status.text = "$(error) Helios-LS: Failed to initialize";
+            status.tooltip = "Helios-LS failed to initialize properly";
+
+            console.error("Failed to find Helios-LS executable");
+            vs.window
+                .showErrorMessage(
+                    "Unable to find the Helios-LS executable. \
+                     Is it installed correctly?",
+                    "Quit extension"
+                )
+                .then(async _ => await cleanUpAndDeactivate(eContext));
         } else {
-            console.error(error);
-            vs.window.showErrorMessage("An unexpected error occurred");
+            status.text = "$(error) Helios-LS: An error occurred";
+            status.tooltip = "Helios-LS has encountered an unexpected error";
+            console.error(`An unexpected error occurred: ${error}`);
         }
     }
 }
@@ -60,9 +74,8 @@ export async function activate(eContext: vs.ExtensionContext) {
 const configsRequiringReload = ["helios.serverPath"];
 
 /**
- * Handler for when the user has changed a configuration in the `settings.json`
- * file. This function will only check Helios-specific options (such as the
- * language server path).
+ * Handler for when the user has changed a configuration in the workspace's
+ * `settings.json` file. This function will only check Helios-specific options.
  *
  * @param event The configuration change event.
  */
@@ -124,12 +137,12 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
  * Disposes all the subscriptions of the extension before stopping the client
  * and deactivating the extension.
  *
- * @param context The extension context to dispose subscriptions from.
+ * @param eContext The extension context to dispose subscriptions from.
  */
-async function cleanUpAndDeactivate(context: vs.ExtensionContext) {
-    while (context.subscriptions.length > 0) {
+async function cleanUpAndDeactivate(eContext: vs.ExtensionContext) {
+    while (eContext.subscriptions.length > 0) {
         try {
-            context.subscriptions.pop()!.dispose();
+            eContext.subscriptions.pop()!.dispose();
         } catch (error) {
             console.error(`Failed to dispose: ${error}`);
         }

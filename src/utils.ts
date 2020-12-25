@@ -17,7 +17,7 @@ export async function getServerPath(
     let serverPath = config.get<string>("serverPath") || "";
 
     if (!(await isPathValid(serverPath))) {
-        let response = await vs.window.showInformationMessage(
+        const response = await vs.window.showInformationMessage(
             serverPath === ""
                 ? "The path to the Helios-LS executable is not configured."
                 : "The configured path to the Helios-LS executable is invalid.",
@@ -29,7 +29,7 @@ export async function getServerPath(
             // We won't handle exceptions here
             serverPath = await locateExecutable(context);
 
-            let response = await vs.window.showInformationMessage(
+            const response = await vs.window.showInformationMessage(
                 "Successfully found the Helios-LS executable. \
                  Would you like to update the configuration with its location?",
                 "No",
