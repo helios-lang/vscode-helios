@@ -2,10 +2,10 @@ import * as lc from "vscode-languageclient";
 import * as vs from "vscode";
 
 import * as commands from "./commands";
-import { Callback, State } from "./state";
+import { Callback, HeliosContext } from "./context";
 import { getServerPath } from "./utils";
 
-let state: State | undefined;
+let hContext: HeliosContext | undefined;
 
 /**
  * Recognised commands for this extension.
@@ -18,38 +18,38 @@ const cmds: { [key: string]: Callback } = {
 /**
  * This function is called when the extension is activated.
  *
- * @param context The extension context.
+ * @param eContext The extension context.
  */
-export async function activate(context: vs.ExtensionContext) {
+export async function activate(eContext: vs.ExtensionContext) {
     try {
-        const serverPath = await getServerPath(context);
+        const serverPath = await getServerPath(eContext);
         let client = createLanguageClient(serverPath);
-        state = await State.activate(context, serverPath, client);
+        hContext = await HeliosContext.activate(eContext, serverPath, client);
 
         // Register command to restart server
-        state.registerCommand("helios.restartServer", async _ => {
+        hContext.registerCommand("helios.restartServer", async _ => {
             vs.window.showInformationMessage("Restarting Helios-LS...");
-            await cleanUpAndDeactivate(context);
-            await activate(context);
+            await cleanUpAndDeactivate(eContext);
+            await activate(eContext);
         });
 
         // Register the rest of the commands
         for (const cmd in cmds) {
             const handler = cmds[cmd];
-            state.registerCommand(cmd, handler);
+            hContext.registerCommand(cmd, handler);
         }
 
         // Detect changes to configuration
         vs.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
     } catch (error) {
         if (error === "HELIOS_ABORT") {
-            await cleanUpAndDeactivate(context);
+            await cleanUpAndDeactivate(eContext);
         } else if (error === "HELIOS_NO_EXECUTABLE_FOUND") {
             vs.window.showErrorMessage(
                 "Unable to find the Helios-LS executable. \
                  Is it installed correctly?"
             );
-            await cleanUpAndDeactivate(context);
+            await cleanUpAndDeactivate(eContext);
         } else {
             console.error(error);
             vs.window.showErrorMessage("An unexpected error occurred");
@@ -91,9 +91,11 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
     let serverOptions: lc.ServerOptions = {
         run: {
             command: serverPath,
+            transport: lc.TransportKind.stdio,
         },
         debug: {
             command: serverPath,
+            transport: lc.TransportKind.stdio,
             options: {
                 env: {
                     RUST_BACKTRACE: 1,
@@ -140,6 +142,6 @@ async function cleanUpAndDeactivate(context: vs.ExtensionContext) {
  * This function is called when the extension is deactivated.
  */
 export async function deactivate() {
-    await state?.client.stop();
-    state = undefined;
+    await hContext?.client.stop();
+    hContext = undefined;
 }
