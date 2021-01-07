@@ -53,7 +53,11 @@ export class HeliosContext {
         hContext.pushDisposable(statusBarItem);
         hContext.setLanguageConfiguration();
 
-        await client.onReady().then(_ => hContext.setStatus("ready"));
+        await client
+            .onReady()
+            .then(_ => hContext.setStatus("ready"))
+            .catch(_ => hContext.setStatus("error"));
+
         return hContext;
     }
 

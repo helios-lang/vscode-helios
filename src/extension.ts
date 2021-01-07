@@ -35,6 +35,7 @@ export async function activate(eContext: vs.ExtensionContext) {
         // Register command to restart server
         hContext.registerCommand("helios.restartServer", async _ => {
             vs.window.showInformationMessage("Restarting Helios-LS...");
+            await client.stop();
             await cleanUpAndDeactivate(eContext);
             await activate(eContext);
         });
