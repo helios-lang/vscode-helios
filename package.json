@@ -5,7 +5,7 @@
   "description": "Helios language support for Visual Studio Code",
   "icon": "assets/icon.png",
   "license": "MIT",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "engines": {
     "vscode": "^1.45.1"
   },
@@ -27,6 +27,16 @@
       {
         "title": "helios",
         "properties": {
+          "helios.enable": {
+            "description": "Enables the Helios language server. Requires a restart when changed.",
+            "type": "boolean",
+            "default": true
+          },
+          "helios.serverPath": {
+            "description": "Absolute path to the Helios language server executable. Requires a restart when changed.",
+            "type": "string",
+            "default": ""
+          },
           "helios.trace.server": {
             "description": "Trace communication between VSCode and the Helios language server.",
             "scope": "window",
@@ -38,15 +48,10 @@
             ],
             "default": "off"
           },
-          "helios.enable": {
-            "description": "Enables the Helios language server. Requires a restart when changed.",
+          "helios.disableDiagnostics": {
+            "description": "Disables highlighting diagnostics (such as errors and warnings) in the editor",
             "type": "boolean",
-            "default": true
-          },
-          "helios.serverPath": {
-            "description": "Absolute path to the Helios language server executable. Requires a restart when changed.",
-            "type": "string",
-            "default": ""
+            "default": false
           }
         }
       }

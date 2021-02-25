@@ -105,13 +105,24 @@ export class HeliosContext {
         const disposable = vs.languages.setLanguageConfiguration("helios", {
             onEnterRules: [
                 {
-                    beforeText: /^\s*-{2}\|/,
+                    beforeText: /^\s*#!/,
                     action: {
                         indentAction: vs.IndentAction.None,
-                        appendText: "--| ",
+                        appendText: "#! ",
+                    },
+                },
+                {
+                    beforeText: /^\s*#{2}/,
+                    action: {
+                        indentAction: vs.IndentAction.None,
+                        appendText: "## ",
                     },
                 },
             ],
+            indentationRules: {
+                increaseIndentPattern: /^.*(=|:|enum|import|let|record|var)\s*$/,
+                decreaseIndentPattern: /^.*(elif|else)\s*$/,
+            },
         });
 
         this.pushDisposable(disposable);

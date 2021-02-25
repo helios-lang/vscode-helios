@@ -1,70 +1,105 @@
 {
-  "Anonymous function": {
+  "Case clause": {
     "prefix": [
-      "fun"
+      "case"
     ],
     "body": [
-      "fun ${1:???} -> ${0:???}"
+      "case ${1:expr}:",
+      "\tof ${2:pattern}: ${0:???}"
     ]
   },
-  "Begin-End block": {
+  "Case pattern": {
     "prefix": [
-      "begin"
+      "of"
+    ],
+    "body": "of ${1:pattern}: ${0:???}"
+  },
+  "Elif statement": {
+    "prefix": [
+      "elif"
     ],
     "body": [
-      "begin",
-      "\t${0:???}",
-      "end"
+      "elif ${1:cond}:",
+      "\t${0:???}"
     ]
   },
-  "If expression": {
+  "Entry point": {
+    "prefix": [
+      "main"
+    ],
+    "body": [
+      "[:entry:]",
+      "func main() =",
+      "\t${0:()}"
+    ]
+  },
+  "For loop": {
+    "prefix": [
+      "for"
+    ],
+    "body": [
+      "for ${1:item} in ${2:items}:",
+      "\t${0:???}"
+    ]
+  },
+  "Function definition": {
+    "prefix": [
+      "func"
+    ],
+    "body": [
+      "func ${1:ident}(${2:params: ???})${3:: ???} =",
+      "\t${0:???}"
+    ]
+  },
+  "If statement": {
     "prefix": [
       "if"
     ],
     "body": [
-      "if ${1:expr} then ${2:???} else ${0:???}"
+      "if ${1:cond}:",
+      "\t${0:???}"
     ]
   },
-  "Let (global) binding": {
+  "Iterator definition": {
+    "prefix": [
+      "iter"
+    ],
+    "body": [
+      "iter ${1:ident}(${2:params: ???})${3:: ???} =",
+      "\t${0:()}"
+    ]
+  },
+  "Let binding": {
     "prefix": [
       "let"
     ],
     "body": "let ${1:ident} = ${0:???}"
   },
-  "Let (local) binding": {
+  "Return statement": {
     "prefix": [
-      "let-in"
+      "return"
     ],
-    "body": [
-      "let ${1:ident} = ${2:???} in",
-      "${0:???}"
-    ]
+    "body": "return ${0:???}"
   },
-  "Match clause": {
+  "Test case": {
     "prefix": [
-      "match"
+      "test"
     ],
     "body": [
-      "match ${1:expr} with",
-      "| ${2:pattern} -> ${0:expr}"
+      "test \"${1:description}\":",
+      "\t${0:???}"
     ]
   },
   "Type declaration": {
     "prefix": [
       "type"
     ],
-    "body": "type ${1:t} = ${0:()}"
+    "body": "type ${1:T} = ${0:()}"
   },
-  "Type-alias declaration": {
+  "Var binding": {
     "prefix": [
-      "type-alias"
+      "var"
     ],
-    "body": "type alias ${1:t} = ${0:()}"
-  },
-  "Val declaration": {
-    "prefix": [
-      "val"
-    ],
-    "body": "val ${1:ident} : ${0:???}"
+    "body": "var ${1:ident} = ${0:???}"
   }
 }
