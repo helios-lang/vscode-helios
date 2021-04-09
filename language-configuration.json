@@ -18,6 +18,7 @@
     { "open": "(", "close": ")", "notIn": ["string"] },
 
     { "open": "'",  "close": "'", "notIn": ["string"] },
+    { "open": "b'",  "close": "'", "notIn": ["string"] },
     { "open": "`",  "close": "`", "notIn": ["string"] },
     { "open": "\"",  "close": "\"", "notIn": ["string"] },
     { "open": "f\"", "close": "\"", "notIn": ["comment", "string"] },

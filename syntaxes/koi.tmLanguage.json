@@ -60,7 +60,7 @@
     },
     "identifier-support-types": {
       "name": "support.class.koi",
-      "match": "(?<![[:word:]])(?:Array|Bool|Char|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Range|Result|String|Vector)(?![[:word:]])"
+      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Char|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|String|Type|Vector)(?![[:word:](])"
     },
     "identifier-support-functions": {
       "name": "support.function.koi",
@@ -83,7 +83,7 @@
     },
     "keyword-control": {
       "name": "keyword.control.helios",
-      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|elif|else|for|if|in|not|of|or|return|while|yield)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|for|if|in|not|of|or|return|while|yield)(?![[:word:]])"
     },
     "keyword-descriptor": {
       "name": "keyword.control.helios",
@@ -91,11 +91,11 @@
     },
     "keyword-structure": {
       "name": "keyword.other.helios",
-      "match": "(?<![[:word:].:`])(?:const|enum|external|forall|func|impl|import|iter|let|module|range|record|self|subtype|test|to|trait|type|until|var|with)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:const|enum|forall|foreign|func|from|impl|import|iter|let|module|range|record|self|test|then|trait|type|var|with|(to|until))(?![[:word:]])"
     },
     "keyword-implicit-parameter-name": {
       "name": "keyword.control.koi keyword.other.koi",
-      "match": "(?<![[:word:].:])\\$[[:digit:]]+(?![[:word:]])"
+      "match": "(?<![[:word:].:])\\$[[:digit:]_]+(?![[:word:]])"
     },
 
 
@@ -122,7 +122,7 @@
     },
     "literal-character": {
       "name": "string.quoted.single.koi",
-      "match": "'[^']*'",
+      "match": "b?'[^']*'",
       "patterns": [
         { "include": "#literal-escape-sequence" }
       ]
@@ -230,9 +230,10 @@
       }
     },
     "entity-type-binding": {
-      "match": "(?<=type)\\s+([_[:alpha:]][[:word:]]*)",
+      "match": "(?<=type)(?:\\s+(alias|rec))?(?:\\s+([_[:alpha:]][[:word:]]*))",
       "captures": {
-        "1": { "name": "entity.name.type" }
+        "1": { "name": "keyword.other.helios" },
+        "2": { "name": "entity.name.type" }
       }
     },
     "entity-trait-binding": {
@@ -245,7 +246,7 @@
 
     "symbol": {
       "name": "keyword.other.koi",
-      "match": "(\\.{2}|\\+|-|\\*|\\/|(:|!)?=|;|~|@|\\$|%|&|\\||\\^|<|>)"
+      "match": "(\\.{2}|\\+|-|\\*|\\/|\\\\|(?<!:):(?!:)|(:|!)?=|;|~|@|\\$|%|&|\\||\\^|<|>)"
     }
   },
   "scopeName": "source.helios"

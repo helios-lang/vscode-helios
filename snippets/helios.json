@@ -4,23 +4,8 @@
       "case"
     ],
     "body": [
-      "case ${1:expr}:",
-      "\tof ${2:pattern}: ${0:???}"
-    ]
-  },
-  "Case pattern": {
-    "prefix": [
-      "of"
-    ],
-    "body": "of ${1:pattern}: ${0:???}"
-  },
-  "Elif statement": {
-    "prefix": [
-      "elif"
-    ],
-    "body": [
-      "elif ${1:cond}:",
-      "\t${0:???}"
+      "case ${1:expr} of",
+      "\t${2:pattern} => ${0:???}"
     ]
   },
   "Entry point": {
@@ -38,7 +23,7 @@
       "for"
     ],
     "body": [
-      "for ${1:item} in ${2:items}:",
+      "for ${1:item} in ${2:items} do",
       "\t${0:???}"
     ]
   },
@@ -56,7 +41,7 @@
       "if"
     ],
     "body": [
-      "if ${1:cond}:",
+      "if ${1:condition} then",
       "\t${0:???}"
     ]
   },
@@ -86,7 +71,7 @@
       "test"
     ],
     "body": [
-      "test \"${1:description}\":",
+      "test \"${1:description}\" =",
       "\t${0:???}"
     ]
   },
@@ -94,7 +79,7 @@
     "prefix": [
       "type"
     ],
-    "body": "type ${1:T} = ${0:()}"
+    "body": "type ${1:Type} = ${0:()}"
   },
   "Var binding": {
     "prefix": [
