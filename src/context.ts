@@ -31,34 +31,29 @@ export class HeliosContext {
      * This static method starts the provided language server client before
      * returning an instance of `HeliosContext`.
      *
-     * @param eContext A reference to the extension context.
-     * @param serverPath The path to the Helios-LS executable.
+     * @param ec A reference to the extension context.
+     * @param path The path to the Helios-LS executable.
      * @param client A reference to the language server client.
-     * @param statusBarItem A reference to the extension's status bar item.
+     * @param status A reference to the extension's status bar item.
      */
     public static async activate(
-        eContext: vs.ExtensionContext,
-        serverPath: string,
+        ec: vs.ExtensionContext,
+        path: string,
         client: lc.LanguageClient,
-        statusBarItem: vs.StatusBarItem
+        status: vs.StatusBarItem
     ): Promise<HeliosContext> {
-        const hContext = new HeliosContext(
-            eContext,
-            serverPath,
-            client,
-            statusBarItem
-        );
+        const hc = new HeliosContext(ec, path, client, status);
 
-        hContext.pushDisposable(client.start());
-        hContext.pushDisposable(statusBarItem);
-        hContext.setLanguageConfiguration();
+        hc.pushDisposable(client.start());
+        hc.pushDisposable(status);
+        hc.setLanguageConfiguration();
 
         await client
             .onReady()
-            .then(_ => hContext.setStatus("ready"))
-            .catch(_ => hContext.setStatus("error"));
+            .then(_ => hc.setStatus("ready"))
+            .catch(_ => hc.setStatus("error"));
 
-        return hContext;
+        return hc;
     }
 
     /**
@@ -120,8 +115,8 @@ export class HeliosContext {
                 },
             ],
             indentationRules: {
-                increaseIndentPattern: /^.*(=|:|enum|import|let|record|var)\s*$/,
-                decreaseIndentPattern: /^.*(elif|else)\s*$/,
+                increaseIndentPattern: /^.*(=>?|do|else|enum|of|record|then)\s*$/,
+                decreaseIndentPattern: /^\s*(else)\s*$/,
             },
         });
 

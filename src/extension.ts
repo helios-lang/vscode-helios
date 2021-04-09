@@ -5,7 +5,10 @@ import * as commands from "./commands";
 import { Callback, HeliosContext } from "./context";
 import { getServerPath } from "./utils";
 
-let hContext: HeliosContext | undefined;
+/**
+ * The global `HeliosContext` instance.
+ */
+let hc: HeliosContext | undefined;
 
 /**
  * Recognised commands for this extension.
@@ -18,9 +21,9 @@ const cmds: { [key: string]: Callback } = {
 /**
  * This function is called when the extension is activated.
  *
- * @param eContext The extension context.
+ * @param ec The extension context.
  */
-export async function activate(eContext: vs.ExtensionContext) {
+export async function activate(ec: vs.ExtensionContext) {
     const alignment = vs.StatusBarAlignment.Left;
     const status = vs.window.createStatusBarItem(alignment);
     status.text = "$(sync~spin) Helios-LS: Getting ready...";
@@ -28,28 +31,29 @@ export async function activate(eContext: vs.ExtensionContext) {
     status.show();
 
     try {
-        const path = await getServerPath(eContext);
+        // TODO: Allow syntax highlighting even without language server
+        const path = await getServerPath(ec);
         const client = createLanguageClient(path);
-        hContext = await HeliosContext.activate(eContext, path, client, status);
+        hc = await HeliosContext.activate(ec, path, client, status);
 
         // Register command to restart server
-        hContext.registerCommand("helios.restartServer", async _ => {
+        hc.registerCommand("helios.restartServer", async _ => {
             vs.window.showInformationMessage("Restarting Helios-LS...");
-            await cleanUpAndDeactivate(eContext);
-            await activate(eContext);
+            await cleanUpAndDeactivate(ec);
+            await activate(ec);
         });
 
         // Register the rest of the commands
         for (const cmd in cmds) {
             const handler = cmds[cmd];
-            hContext.registerCommand(cmd, handler);
+            hc.registerCommand(cmd, handler);
         }
 
         // Detect changes to configuration
         vs.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
     } catch (error) {
         if (error === "HELIOS_ABORT") {
-            await cleanUpAndDeactivate(eContext);
+            await cleanUpAndDeactivate(ec);
             status.hide();
         } else if (error === "HELIOS_NO_EXECUTABLE_FOUND") {
             status.text = "$(error) Helios-LS: Failed to initialize";
@@ -62,7 +66,7 @@ export async function activate(eContext: vs.ExtensionContext) {
                      Is it installed correctly?",
                     "Quit extension"
                 )
-                .then(async _ => await cleanUpAndDeactivate(eContext));
+                .then(async _ => await cleanUpAndDeactivate(ec));
         } else {
             status.text = "$(error) Helios-LS: An error occurred";
             status.tooltip = "Helios-LS has encountered an unexpected error";
@@ -99,6 +103,8 @@ async function onDidChangeConfiguration(event: vs.ConfigurationChangeEvent) {
 
 /**
  * Creates a new language client and establishes the client and server.
+ *
+ * @param serverPath The path to the language server executable.
  */
 function createLanguageClient(serverPath: string): lc.LanguageClient {
     let serverOptions: lc.ServerOptions = {
@@ -137,12 +143,12 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
  * Disposes all the subscriptions of the extension before stopping the client
  * and deactivating the extension.
  *
- * @param eContext The extension context to dispose subscriptions from.
+ * @param ec The extension context to dispose subscriptions from.
  */
-async function cleanUpAndDeactivate(eContext: vs.ExtensionContext) {
-    while (eContext.subscriptions.length > 0) {
+async function cleanUpAndDeactivate(ec: vs.ExtensionContext) {
+    while (ec.subscriptions.length > 0) {
         try {
-            eContext.subscriptions.pop()!.dispose();
+            ec.subscriptions.pop()!.dispose();
         } catch (error) {
             console.error(`Failed to dispose: ${error}`);
         }
@@ -155,6 +161,6 @@ async function cleanUpAndDeactivate(eContext: vs.ExtensionContext) {
  * This function is called when the extension is deactivated.
  */
 export async function deactivate() {
-    await hContext?.client.stop();
-    hContext = undefined;
+    await hc?.client.stop();
+    hc = undefined;
 }

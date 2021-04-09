@@ -8,11 +8,9 @@ const HELIOS_LS_EXECUTABLE = "helios-ls";
 /**
  * Attempts to get the path of the language server.
  *
- * @param context The extension context to get the global storage URI.
+ * @param ec The extension context to get the global storage URI.
  */
-export async function getServerPath(
-    context: vs.ExtensionContext
-): Promise<string> {
+export async function getServerPath(ec: vs.ExtensionContext): Promise<string> {
     const config = vs.workspace.getConfiguration("helios");
     let serverPath = config.get<string>("serverPath") || "";
 
@@ -27,8 +25,7 @@ export async function getServerPath(
 
         if (response === "Find it for me") {
             // We won't handle exceptions here
-            serverPath = await locateExecutable(context);
-
+            serverPath = await locateExecutable(ec);
             const response = await vs.window.showInformationMessage(
                 "Successfully found the Helios-LS executable. \
                  Would you like to update the configuration with its location?",
@@ -80,10 +77,10 @@ async function isPathValid(path: string): Promise<boolean> {
  *
  * [`which`]: https://www.npmjs.com/package/which
  *
- * @param context The extension context to get the global storage URI.
+ * @param ec The extension context to get the global storage URI.
  */
-async function locateExecutable(context: vs.ExtensionContext): Promise<string> {
-    let globalStorageUri = context.globalStorageUri;
+async function locateExecutable(ec: vs.ExtensionContext): Promise<string> {
+    let globalStorageUri = ec.globalStorageUri;
     let executablePath = join(globalStorageUri.fsPath, HELIOS_LS_EXECUTABLE);
 
     return await fs.promises
