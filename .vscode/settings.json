@@ -3,5 +3,6 @@
   "editor.formatOnSave": true,
   "editor.renderWhitespace": "boundary",
   "editor.rulers": [80, 120],
+  "editor.tabSize": 2,
   "prettier.prettierPath": "../node_modules",
 }
