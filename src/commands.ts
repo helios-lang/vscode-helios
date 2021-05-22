@@ -15,7 +15,7 @@ export function showSyntaxTree(_: HeliosContext) {
  */
 export function showVersion(context: HeliosContext) {
     context.setStatus("loading", "Retrieving version...");
-    const response = spawnSync(context.serverPath, ["--version"], {
+    const response = spawnSync(context.path, ["--version"], {
         encoding: "utf8",
     });
 

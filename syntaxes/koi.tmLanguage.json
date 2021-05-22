@@ -60,7 +60,7 @@
     },
     "identifier-support-types": {
       "name": "support.class.koi",
-      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Char|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|String|Type|Vector)(?![[:word:](])"
+      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Char|Either|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|String|Type|Vector)(?![[:word:]])"
     },
     "identifier-support-functions": {
       "name": "support.function.koi",
@@ -74,6 +74,7 @@
         { "include": "#keyword-control" },
         { "include": "#keyword-descriptor" },
         { "include": "#keyword-structure" },
+        { "include": "#keyword-temp" },
         { "include": "#keyword-implicit-parameter-name" }
       ]
     },
@@ -83,7 +84,7 @@
     },
     "keyword-control": {
       "name": "keyword.control.helios",
-      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|for|if|in|not|of|or|return|while|yield)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|for|if|in|match|not|of|or|return|while|yield|(by|to|until))(?![[:word:]])"
     },
     "keyword-descriptor": {
       "name": "keyword.control.helios",
@@ -91,7 +92,11 @@
     },
     "keyword-structure": {
       "name": "keyword.other.helios",
-      "match": "(?<![[:word:].:`])(?:const|enum|forall|foreign|func|from|impl|import|iter|let|module|range|record|self|test|then|trait|type|var|with|(to|until))(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:const|enum|forall|foreign|func|from|impl|import|iter|let|module|range|record|self|test|then|trait|type|var|with)(?![[:word:]])"
+    },
+    "keyword-temp": {
+      "name": "keyword.other.helios",
+      "match": "(?<![[:word:].:`])(?:export|exposing|hide|init|open|show|val|where)(?![[:word:]])"
     },
     "keyword-implicit-parameter-name": {
       "name": "keyword.control.koi keyword.other.koi",
@@ -118,7 +123,7 @@
     },
     "literal-constructor": {
       "name": "support.class support.constant",
-      "match": "(?<![[:word:]`])(Some|None|Ok|Error)(?![[:word:]])"
+      "match": "(?<![[:word:]`])(Some|None|Ok(ay)?|Error)(?![[:word:]])"
     },
     "literal-character": {
       "name": "string.quoted.single.koi",
@@ -245,8 +250,8 @@
 
 
     "symbol": {
-      "name": "keyword.other.koi",
-      "match": "(\\.{2}|\\+|-|\\*|\\/|\\\\|(?<!:):(?!:)|(:|!)?=|;|~|@|\\$|%|&|\\||\\^|<|>)"
+      "name": "keyword.other",
+      "match": "(\\.{2}|\\+|-|\\*|\\/|\\\\|:|(:|!)?=|;|~|@|\\$|%|&|\\||\\^|<|>)"
     }
   },
   "scopeName": "source.helios"

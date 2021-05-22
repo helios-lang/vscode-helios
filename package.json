@@ -103,8 +103,7 @@
     "vscode:prepublish": "yarn run build",
     "build": "tsc -p ./",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -watch -p ./",
-    "pretest": "yarn run build && yarn run lint"
+    "watch": "tsc -watch -p ./"
   },
   "dependencies": {
     "vscode-languageclient": "^6.1.3",

@@ -1,4 +1,7 @@
 {
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.renderWhitespace": "boundary",
   "editor.rulers": [80, 120],
+  "prettier.prettierPath": "../node_modules",
 }

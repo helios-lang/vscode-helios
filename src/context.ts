@@ -4,7 +4,7 @@ import * as lc from "vscode-languageclient";
 /**
  * The type of a recognized callback to be invoked when a command is executed.
  */
-export type Callback = (state: HeliosContext) => void;
+export type Callback = (context: HeliosContext) => void;
 
 /**
  * The current status of the language server (which will be displayed in the
@@ -19,10 +19,10 @@ export type Status = "loading" | "ready" | "error";
  */
 export class HeliosContext {
     private constructor(
-        private readonly eContext: vs.ExtensionContext,
-        readonly serverPath: string,
+        private readonly ec: vs.ExtensionContext,
+        readonly path: string,
         readonly client: lc.LanguageClient,
-        private readonly statusBarItem: vs.StatusBarItem
+        private readonly status: vs.StatusBarItem
     ) {}
 
     /**
@@ -48,10 +48,13 @@ export class HeliosContext {
         hc.pushDisposable(status);
         hc.setLanguageConfiguration();
 
-        await client
-            .onReady()
-            .then(_ => hc.setStatus("ready"))
-            .catch(_ => hc.setStatus("error"));
+        try {
+            await client.onReady();
+            hc.setStatus("ready");
+        } catch (error) {
+            console.error(`Failed to get client ready: ${error}`);
+            hc.setStatus("error");
+        }
 
         return hc;
     }
@@ -66,21 +69,24 @@ export class HeliosContext {
     public setStatus(status: Status, message: string | undefined = undefined) {
         const name = "Helios-LS";
         switch (status) {
-            case "ready":
-                var message_ = message || "Ready";
-                this.statusBarItem.text = `$(check) ${name}: ${message_}`;
-                this.statusBarItem.tooltip = `${name} is ready for tasks`;
+            case "ready": {
+                const msg = message ?? "Ready";
+                this.status.text = `$(check) ${name}: ${msg}`;
+                this.status.tooltip = `${name} is ready for tasks`;
                 break;
-            case "loading":
-                var message_ = message || "Loading...";
-                this.statusBarItem.text = `$(sync~spin) ${name}: ${message_}`;
-                this.statusBarItem.tooltip = `${name} is busy`;
+            }
+            case "loading": {
+                const msg = message ?? "Loading...";
+                this.status.text = `$(sync~spin) ${name}: ${msg}`;
+                this.status.tooltip = `${name} is busy`;
                 break;
-            case "error":
-                var message_ = message || "Error";
-                this.statusBarItem.text = `$(error) ${name}: ${message_}`;
-                this.statusBarItem.tooltip = `${name} has encountered an error`;
+            }
+            case "error": {
+                const msg = message ?? "Error";
+                this.status.text = `$(error) ${name}: ${msg}`;
+                this.status.tooltip = `${name} has encountered an error`;
                 break;
+            }
         }
     }
 
@@ -124,6 +130,6 @@ export class HeliosContext {
     }
 
     private pushDisposable(disposable: vs.Disposable) {
-        this.eContext.subscriptions.push(disposable);
+        this.ec.subscriptions.push(disposable);
     }
 }

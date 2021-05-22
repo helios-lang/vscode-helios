@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as vs from "vscode";
-import which = require("which");
+import * as which from "which";
 import { basename, join } from "path";
 
 const HELIOS_LS_EXECUTABLE = "helios-ls";
@@ -16,7 +16,7 @@ export async function getServerPath(ec: vs.ExtensionContext): Promise<string> {
 
     if (!(await isPathValid(serverPath))) {
         const response = await vs.window.showInformationMessage(
-            serverPath === ""
+            serverPath.length === 0
                 ? "The path to the Helios-LS executable is not configured."
                 : "The configured path to the Helios-LS executable is invalid.",
             "Quit extension",
@@ -33,11 +33,9 @@ export async function getServerPath(ec: vs.ExtensionContext): Promise<string> {
                 "Yes"
             );
 
-            if (response === "Yes") {
-                config.update("serverPath", serverPath);
-            }
+            if (response === "Yes") config.update("serverPath", serverPath);
         } else {
-            return Promise.reject("HELIOS_ABORT");
+            throw new Error("HELIOS_ABORT");
         }
     }
 
@@ -49,13 +47,14 @@ export async function getServerPath(ec: vs.ExtensionContext): Promise<string> {
  *
  * @param path The path to check.
  */
-async function isPathValid(path: string): Promise<boolean> {
-    if (path === "") {
-        return Promise.resolve(false);
+export async function isPathValid(path: string): Promise<boolean> {
+    if (path.length === 0) {
+        return false;
     } else {
         const checkIfValid = (stats: fs.Stats) => {
             return stats.isFile() && basename(path) === HELIOS_LS_EXECUTABLE;
         };
+
         return await fs.promises
             .stat(path)
             .then(checkIfValid)
