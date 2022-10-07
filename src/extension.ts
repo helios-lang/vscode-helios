@@ -1,4 +1,4 @@
-import * as lc from 'vscode-languageclient';
+import * as lc from 'vscode-languageclient/node';
 import * as vs from 'vscode';
 
 import * as commands from './commands';
@@ -13,7 +13,7 @@ let hc: HeliosContext | undefined;
 /**
  * Recognised commands for this extension.
  */
-const cmds: { [key: string]: Callback } = {
+const allCommands: { [key: string]: Callback } = {
   'helios.showSyntaxTree': commands.showSyntaxTree,
   'helios.version': commands.showVersion,
 };
@@ -44,9 +44,9 @@ export async function activate(ec: vs.ExtensionContext) {
     });
 
     // Register the rest of the commands
-    for (const cmd in cmds) {
-      const handler = cmds[cmd];
-      hc.registerCommand(cmd, handler);
+    for (const command in allCommands) {
+      const handler = allCommands[command];
+      hc.registerCommand(command, handler);
     }
 
     // Detect changes to configuration
@@ -94,14 +94,16 @@ async function onDidChangeConfiguration(event: vs.ConfigurationChangeEvent) {
 
   if (!changedOption) return;
 
-  const response = await vs.window.showWarningMessage(
-    `Changing '${changedOption}' requires a reload.`,
-    'Reload Now'
-  );
-
-  if (response === 'Reload Now') {
-    await vs.commands.executeCommand('workbench.action.reloadWindow');
-  }
+  return vs.window
+    .showWarningMessage(
+      `Changing ${changedOption} requires a reload.`,
+      'Reload Now'
+    )
+    .then(response => {
+      if (response === 'Reload Now') {
+        return vs.commands.executeCommand('workbench.action.reloadWindow');
+      }
+    });
 }
 
 /**
@@ -163,7 +165,9 @@ async function cleanUpAndDeactivate(ec: vs.ExtensionContext) {
 /**
  * This function is called when the extension is deactivated.
  */
-export async function deactivate() {
-  await hc?.client.stop();
-  hc = undefined;
+export async function deactivate(): Promise<void | undefined> {
+  if (!hc?.client) {
+    return undefined;
+  }
+  return hc.client.stop();
 }

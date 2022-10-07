@@ -1,5 +1,5 @@
+import * as lc from 'vscode-languageclient/node';
 import * as vs from 'vscode';
-import * as lc from 'vscode-languageclient';
 
 /**
  * The type of a recognized callback to be invoked when a command is executed.
@@ -20,8 +20,8 @@ export type Status = 'loading' | 'ready' | 'error';
 export class HeliosContext {
   private constructor(
     private readonly ec: vs.ExtensionContext,
-    readonly path: string,
-    readonly client: lc.LanguageClient,
+    public readonly path: string,
+    public readonly client: lc.LanguageClient,
     private readonly status: vs.StatusBarItem
   ) {}
 
@@ -44,12 +44,11 @@ export class HeliosContext {
   ): Promise<HeliosContext> {
     const hc = new HeliosContext(ec, path, client, status);
 
-    hc.pushDisposable(client.start());
     hc.pushDisposable(status);
     hc.setLanguageConfiguration();
 
     try {
-      await client.onReady();
+      await client.start();
       hc.setStatus('ready');
     } catch (error) {
       console.error(`Failed to get client ready: ${error}`);
