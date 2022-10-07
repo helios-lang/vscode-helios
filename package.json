@@ -7,7 +7,7 @@
   "license": "MIT",
   "version": "0.4.0",
   "engines": {
-    "vscode": "^1.45.1"
+    "vscode": "^1.72.0"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
             "default": ""
           },
           "helios.trace.server": {
-            "description": "Trace communication between VSCode and the Helios language server.",
+            "description": "Trace communication between VS Code and the Helios language server.",
             "scope": "window",
             "type": "string",
             "enum": [
@@ -85,9 +85,7 @@
           "helios"
         ],
         "extensions": [
-          ".he",
-          ".hel",
-          ".helios"
+          ".he"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -101,9 +99,9 @@
   },
   "scripts": {
     "vscode:prepublish": "pnpm build",
-    "build": "tsc -p ./",
+    "build": "tsc -b",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -b -w"
   },
   "dependencies": {
     "vscode-languageclient": "^8.0.2",
