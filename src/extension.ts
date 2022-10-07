@@ -3,12 +3,19 @@ import * as vs from 'vscode';
 
 import * as commands from './commands';
 import { Callback, HeliosContext } from './context';
-import { HeliosError, HeliosErrorCode, getServerPath } from './utils';
+import {
+  HeliosError,
+  HeliosErrorCode,
+  getServerPath,
+  LS_DISPLAY_NAME,
+} from './utils';
 
 /**
  * The global `HeliosContext` instance.
  */
 let hc: HeliosContext | undefined;
+
+const EXTENSION_DISPLAY_NAME = 'Helios';
 
 /**
  * Recognised commands for this extension.
@@ -26,8 +33,8 @@ const allCommands: { [key: string]: Callback } = {
 export async function activate(ec: vs.ExtensionContext) {
   const alignment = vs.StatusBarAlignment.Left;
   const status = vs.window.createStatusBarItem(alignment);
-  status.text = '$(sync~spin) Helios-LS: Getting ready...';
-  status.tooltip = 'Helios-LS is getting ready...';
+  status.text = `$(sync~spin) ${EXTENSION_DISPLAY_NAME}: Getting ready...`;
+  status.tooltip = `${EXTENSION_DISPLAY_NAME} is getting ready...`;
   status.show();
 
   try {
@@ -38,7 +45,9 @@ export async function activate(ec: vs.ExtensionContext) {
 
     // Register command to restart server
     hc.registerCommand('helios.restartServer', async _ => {
-      vs.window.showInformationMessage('Restarting Helios-LS...');
+      vs.window.showInformationMessage(
+        `Restarting ${EXTENSION_DISPLAY_NAME}...`
+      );
       await cleanUpAndDeactivate(ec);
       await activate(ec);
     });
@@ -53,16 +62,23 @@ export async function activate(ec: vs.ExtensionContext) {
     vs.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
   } catch (error) {
     if (error instanceof HeliosError) {
-      if (error.code === HeliosErrorCode.CANCEL) {
+      if (error.code === HeliosErrorCode.ABORT) {
+        status.text = `$(error) ${EXTENSION_DISPLAY_NAME}: Aborted`;
+        status.tooltip = `${EXTENSION_DISPLAY_NAME} encountered a serious error`;
         await vs.window.showErrorMessage(
-          'Could not find the Helios-LS executable in time.',
+          `${EXTENSION_DISPLAY_NAME} has encountered a serious error`,
           'Quit Extension'
         );
-      } else if (error.code === HeliosErrorCode.NO_EXECUTABLE_FOUND) {
-        status.text = '$(error) Helios-LS: Failed to initialize';
-        status.tooltip = 'Helios-LS failed to initialize properly';
+      } else if (error.code === HeliosErrorCode.LS_SEARCH_CANCELED) {
         await vs.window.showErrorMessage(
-          'Unable to find the Helios-LS executable. Is it installed correctly?',
+          `${EXTENSION_DISPLAY_NAME} took too long to find ${LS_DISPLAY_NAME}.`,
+          'Quit Extension'
+        );
+      } else if (error.code === HeliosErrorCode.LS_NOT_FOUND) {
+        status.text = `$(error) ${EXTENSION_DISPLAY_NAME}: Failed to initialize`;
+        status.tooltip = `${EXTENSION_DISPLAY_NAME} failed to initialize properly`;
+        await vs.window.showErrorMessage(
+          `${EXTENSION_DISPLAY_NAME} failed to find ${LS_DISPLAY_NAME} in your system. Ensure it is installed correctly and try again.`,
           'Quit Extension'
         );
       }
@@ -71,8 +87,8 @@ export async function activate(ec: vs.ExtensionContext) {
       await cleanUpAndDeactivate(ec);
       status.hide();
     } else {
-      status.text = '$(error) Helios-LS: An error occurred';
-      status.tooltip = 'Helios-LS has encountered an unexpected error';
+      status.text = `$(error) ${EXTENSION_DISPLAY_NAME}: An error occurred`;
+      status.tooltip = `${EXTENSION_DISPLAY_NAME} has encountered an unexpected error`;
       console.error(`An unexpected error occurred: ${error}`);
     }
   }
@@ -137,8 +153,8 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
   };
 
   return new lc.LanguageClient(
-    'helios-ls',
-    'Helios-LS',
+    'helios',
+    EXTENSION_DISPLAY_NAME,
     serverOptions,
     clientOptions
   );
