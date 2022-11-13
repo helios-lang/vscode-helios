@@ -60,7 +60,7 @@
     },
     "identifier-support-types": {
       "name": "support.class.koi",
-      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Char|Either|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|String|Type|Vector)(?![[:word:]])"
+      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Either|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|Rune|String|Type|Vector)(?![[:word:]])"
     },
     "identifier-support-functions": {
       "name": "support.function.koi",
