@@ -4,7 +4,7 @@ import * as vs from 'vscode';
 /**
  * The type of a recognized callback to be invoked when a command is executed.
  */
-export type Callback = (context: HeliosContext) => void;
+export type CommandCallback = (context: HeliosContext) => void;
 
 /**
  * The current status of the language server (which will be displayed in the
@@ -95,7 +95,7 @@ export class HeliosContext {
    * @param name The name of the command.
    * @param callback A callback to call when the command is invoked.
    */
-  public registerCommand(name: string, callback: Callback) {
+  public registerCommand(name: string, callback: CommandCallback) {
     const handler = () => callback(this);
     const disposable = vs.commands.registerCommand(name, handler);
     this.pushDisposable(disposable);

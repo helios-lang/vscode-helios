@@ -2,25 +2,20 @@ import * as lc from 'vscode-languageclient/node';
 import * as vs from 'vscode';
 
 import * as commands from './commands';
-import { Callback, HeliosContext } from './context';
-import {
-  HeliosError,
-  HeliosErrorCode,
-  getServerPath,
-  LS_DISPLAY_NAME,
-} from './utils';
+import * as context from './context';
+import * as utils from './utils';
 
 /**
  * The global `HeliosContext` instance.
  */
-let hc: HeliosContext | undefined;
+let hc: context.HeliosContext | undefined;
 
 const EXTENSION_DISPLAY_NAME = 'Helios';
 
 /**
  * Recognised commands for this extension.
  */
-const allCommands: { [key: string]: Callback } = {
+const allCommands: { [key: string]: context.CommandCallback } = {
   'helios.showSyntaxTree': commands.showSyntaxTree,
   'helios.version': commands.showVersion,
 };
@@ -39,9 +34,9 @@ export async function activate(ec: vs.ExtensionContext) {
 
   try {
     // TODO: Allow syntax highlighting even without language server
-    const path = await getServerPath(ec);
+    const path = await utils.getServerPath(ec);
     const client = createLanguageClient(path);
-    hc = await HeliosContext.activate(ec, path, client, status);
+    hc = await context.HeliosContext.activate(ec, path, client, status);
 
     // Register command to restart server
     hc.registerCommand('helios.restartServer', async _ => {
@@ -61,24 +56,24 @@ export async function activate(ec: vs.ExtensionContext) {
     // Detect changes to configuration
     vs.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
   } catch (error) {
-    if (error instanceof HeliosError) {
-      if (error.code === HeliosErrorCode.ABORT) {
+    if (error instanceof utils.HeliosError) {
+      if (error.code === utils.HeliosErrorCode.ABORT) {
         status.text = `$(error) ${EXTENSION_DISPLAY_NAME}: Aborted`;
         status.tooltip = `${EXTENSION_DISPLAY_NAME} encountered a serious error`;
         await vs.window.showErrorMessage(
           `${EXTENSION_DISPLAY_NAME} has encountered a serious error`,
           'Quit Extension'
         );
-      } else if (error.code === HeliosErrorCode.LS_SEARCH_CANCELED) {
+      } else if (error.code === utils.HeliosErrorCode.LS_SEARCH_CANCELED) {
         await vs.window.showErrorMessage(
-          `${EXTENSION_DISPLAY_NAME} took too long to find ${LS_DISPLAY_NAME}.`,
+          `${EXTENSION_DISPLAY_NAME} took too long to find ${utils.LS_DISPLAY_NAME}.`,
           'Quit Extension'
         );
-      } else if (error.code === HeliosErrorCode.LS_NOT_FOUND) {
+      } else if (error.code === utils.HeliosErrorCode.LS_NOT_FOUND) {
         status.text = `$(error) ${EXTENSION_DISPLAY_NAME}: Failed to initialize`;
         status.tooltip = `${EXTENSION_DISPLAY_NAME} failed to initialize properly`;
         await vs.window.showErrorMessage(
-          `${EXTENSION_DISPLAY_NAME} failed to find ${LS_DISPLAY_NAME} in your system. Ensure it is installed correctly and try again.`,
+          `${EXTENSION_DISPLAY_NAME} failed to find ${utils.LS_DISPLAY_NAME} in your system. Ensure it is installed correctly and try again.`,
           'Quit Extension'
         );
       }
