@@ -84,7 +84,7 @@
     },
     "keyword-control": {
       "name": "keyword.control.helios",
-      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|for|if|in|match|not|of|or|return|while|yield|(by|to|until))(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|expect|for|if|in|match|not|of|or|return|while|yield|(by|to|until))(?![[:word:]])"
     },
     "keyword-descriptor": {
       "name": "keyword.control.helios",
