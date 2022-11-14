@@ -101,7 +101,7 @@ export async function isValidServerPath(path: string): Promise<boolean> {
  */
 async function locateExecutable(ec: vs.ExtensionContext): Promise<string> {
   try {
-    let executablePath = join(ec.globalStorageUri.fsPath, LS_EXECUTABLE);
+    const executablePath = join(ec.globalStorageUri.fsPath, LS_EXECUTABLE);
     await fs.promises.stat(executablePath); // Throws if it is not valid
     return executablePath;
   } catch (error) {
@@ -111,30 +111,30 @@ async function locateExecutable(ec: vs.ExtensionContext): Promise<string> {
         title: `Locating the ${LS_DISPLAY_NAME} executable...`,
         cancellable: true,
       },
-      async (progress, token) => {
-        return new Promise<string>(async (resolve, reject) => {
-          progress.report({ increment: 25 });
+      async (_progress, token) => {
+        return new Promise<string>((resolve, reject) => {
           token.onCancellationRequested(() => {
             console.warn('The task has been cancelled');
             return reject(new HeliosError(HeliosErrorCode.LS_SEARCH_CANCELED));
           });
 
-          try {
-            // We'll abort this task if it takes longer than
-            // `FIND_EXECUTABLE_TIMEOUT` milliseconds.
-            setTimeout(() => {
-              reject(new HeliosError(HeliosErrorCode.LS_SEARCH_CANCELED));
-            }, FIND_EXECUTABLE_TIMEOUT);
+          // We'll abort this task if it takes longer than
+          // `FIND_EXECUTABLE_TIMEOUT` milliseconds.
+          const timeout = setTimeout(() => {
+            reject(new HeliosError(HeliosErrorCode.LS_SEARCH_CANCELED));
+          }, FIND_EXECUTABLE_TIMEOUT);
 
-            progress.report({ increment: 50 });
-            const path = await which(LS_EXECUTABLE);
-
-            progress.report({ increment: 100 });
-            return resolve(path);
-          } catch (error) {
-            console.error(`Failed to find executable: ${error}`);
-            return reject(new HeliosError(HeliosErrorCode.LS_NOT_FOUND));
-          }
+          return which(LS_EXECUTABLE)
+            .then(path => {
+              resolve(path);
+            })
+            .catch(error => {
+              console.error(`Failed to find executable: ${error}`);
+              reject(new HeliosError(HeliosErrorCode.LS_NOT_FOUND));
+            })
+            .finally(() => {
+              clearTimeout(timeout);
+            });
         });
       }
     );

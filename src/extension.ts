@@ -20,6 +20,8 @@ const allCommands: { [key: string]: context.CommandCallback } = {
   'helios.version': commands.showVersion,
 };
 
+const configsRequiringReload = ['helios.serverPath'];
+
 /**
  * This function is called when the extension is activated.
  *
@@ -89,7 +91,13 @@ export async function activate(ec: vs.ExtensionContext) {
   }
 }
 
-const configsRequiringReload = ['helios.serverPath'];
+/**
+ * This function is called when the extension is deactivated.
+ */
+export async function deactivate(): Promise<void | undefined> {
+  if (!hc?.client) return undefined;
+  return hc.client.stop();
+}
 
 /**
  * Handler for when the user has changed a configuration in the workspace's
@@ -123,7 +131,7 @@ async function onDidChangeConfiguration(event: vs.ConfigurationChangeEvent) {
  * @param serverPath The path to the language server executable.
  */
 function createLanguageClient(serverPath: string): lc.LanguageClient {
-  let serverOptions: lc.ServerOptions = {
+  const serverOptions: lc.ServerOptions = {
     run: {
       command: serverPath,
       transport: lc.TransportKind.stdio,
@@ -140,7 +148,7 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
     },
   };
 
-  let clientOptions: lc.LanguageClientOptions = {
+  const clientOptions: lc.LanguageClientOptions = {
     documentSelector: [
       { scheme: 'file', language: 'helios' },
       { scheme: 'untitled', language: 'helios' },
@@ -164,21 +172,11 @@ function createLanguageClient(serverPath: string): lc.LanguageClient {
 async function cleanUpAndDeactivate(ec: vs.ExtensionContext) {
   while (ec.subscriptions.length > 0) {
     try {
-      ec.subscriptions.pop()!.dispose();
+      ec.subscriptions.pop()?.dispose();
     } catch (error) {
       console.error(`Failed to dispose: ${error}`);
     }
   }
 
   await deactivate();
-}
-
-/**
- * This function is called when the extension is deactivated.
- */
-export async function deactivate(): Promise<void | undefined> {
-  if (!hc?.client) {
-    return undefined;
-  }
-  return hc.client.stop();
 }

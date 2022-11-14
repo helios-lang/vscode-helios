@@ -4,10 +4,11 @@
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "@typescript-eslint/no-shadow": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "args": "all", "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
     "curly": ["warn", "multi-line", "consistent"],
-    "no-shadow": "off",
     "no-undef": "off",
     "no-unused-vars": "off",
     "prefer-const": "warn",
