@@ -9,7 +9,7 @@
     { "include": "#binding" },
     { "include": "#literal" },
     { "include": "#entity" },
-    { "include": "#symbol" }
+    { "include": "#sigil" }
   ],
   "repository": {
     "annotation": {
@@ -37,9 +37,85 @@
       "end": "\n"
     },
     "comment-block": {
+      "patterns": [
+        { "include": "#comment-block-legacy" },
+        { "include": "#comment-block-greenfield" }
+      ]
+    },
+    "comment-block-legacy": {
       "name": "comment.block.koi",
       "begin": "{([_[:alpha:]][[:word:]]*)?\\|",
       "end": "\\|\\1}"
+    },
+    "comment-block-greenfield": {
+      "patterns": [
+        {
+          "name": "comment.block.koi",
+          "begin": "\\{{3}",
+          "end": "\\}{3}",
+          "patterns": [
+            { "include": "#comment-block-greenfield-attribute" }
+          ]
+        },
+        {
+          "name": "comment.block.koi",
+          "begin": "\\{{2}",
+          "end": "\\}{2}",
+          "patterns": [
+            { "include": "#comment-block-greenfield-attribute" }
+          ]
+        },
+        {
+          "name": "comment.block.koi",
+          "begin": "(`|'){3}",
+          "end": "\\1{3}",
+          "patterns": [
+            { "include": "#comment-block-greenfield-attribute" }
+          ]
+        },
+        {
+          "name": "comment.block.koi",
+          "begin": "(\\-|~){3,}",
+          "end": "(\\-|~){3,}",
+          "patterns": [
+            { "include": "#comment-block-greenfield-attribute" }
+          ]
+        },
+        {
+          "name": "comment.block.koi",
+          "begin": "doc\"{3}",
+          "end": "\"{3}",
+          "patterns": [
+            { "include": "#comment-block-greenfield-attribute" }
+          ]
+        },
+        {
+          "patterns": [
+            {
+              "name": "comment.block.koi",
+              "begin": "«",
+              "end": "»",
+              "patterns": [
+                { "include": "#comment-block-greenfield-attribute" }
+              ]
+            },
+            {
+              "name": "comment.block.koi",
+              "begin": "<{2}",
+              "end": ">{2}",
+              "patterns": [
+                { "include": "#comment-block-greenfield-attribute" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "comment-block-greenfield-attribute": {
+      "match": "^\\s*((@|=)[[:alpha:]][[:word:]]*)",
+      "captures": {
+        "1": { "name": "keyword.other.koi" }
+      }
     },
 
 
@@ -54,17 +130,22 @@
 
     "identifier": {
       "patterns": [
+        { "include": "#identifier-symbol" },
         { "include": "#identifier-support-types" },
         { "include": "#identifier-support-functions" }
       ]
     },
+    "identifier-symbol": {
+      "name": "constant.language.koi",
+      "match": "@[_[:alpha:]][[:word:]]*"
+    },
     "identifier-support-types": {
       "name": "support.class.koi",
-      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Either|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|Rune|String|Type|Vector)(?![[:word:]])"
+      "match": "(?<![[:word:]])(?:Array|Bool(ean)?|Either|Float(32|64)?|U?Int(8|16|32|64|128)?|Maybe|Natural|Result|Rune|Self|String|Type|Vector)(?![[:word:]])"
     },
     "identifier-support-functions": {
       "name": "support.function.koi",
-      "match": "(?<![[:word:]])(?:assert(_eq)?|(e)?print(ln)?)(?![[:word:]])"
+      "match": "(?<![[:word:]])(?:assert(_eq)?|(e)?print(ln)?|falsy|truthy)(?![[:word:]])"
     },
 
 
@@ -84,15 +165,15 @@
     },
     "keyword-control": {
       "name": "keyword.control.helios",
-      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|expect|for|if|in|match|not|of|or|return|while|yield|(by|to|until))(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:and|as|break|case|continue|do|else|expect|for|if|in|match|not|of|or|return|while|yield|(by|to|until|unless))(?![[:word:]])"
     },
     "keyword-descriptor": {
       "name": "keyword.control.helios",
-      "match": "(?<![[:word:].:`])(?:addr|ptr|ref|unsafe)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:addr|ptr|ref|unsafe|(unique|move|take|give|own|public|private|internal)|(is|of|new|in|then|set|proc|begin|end|local|returns))(?![[:word:]])"
     },
     "keyword-structure": {
       "name": "keyword.other.helios",
-      "match": "(?<![[:word:].:`])(?:const|enum|forall|foreign|func|from|impl|import|iter|let|module|range|record|self|test|then|trait|type|var|with)(?![[:word:]])"
+      "match": "(?<![[:word:].:`])(?:const|enum|forall|foreign|fn|func(tion)?|from|impl|import|iter|let|module|range|record|self|test|then|trait|type|var|with|(data|def(ine)?|end|extend|object|struct|when|constructor|using|include|require))(?![[:word:]])"
     },
     "keyword-temp": {
       "name": "keyword.other.helios",
@@ -107,7 +188,7 @@
     "literal": {
       "patterns": [
         { "include": "#literal-boolean" },
-        { "include": "#literal-constructor" },
+        { "include": "--#literal-constructor" },
         { "include": "#literal-character" },
         { "include": "#literal-number" },
         { "include": "#literal-string" }
@@ -165,6 +246,29 @@
         { "include": "#expression" }
       ]
     },
+    "literal-string-interpolated-text-new": {
+      "begin": "(?<!\\\\)\\%\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "endCaptures": {
+        "0": { "name": "constant.character.interpolation.koi" }
+      },
+      "contentName": "meta.embedded.koi meta.embedded.line.koi meta.template.expression.koi",
+      "patterns": [
+        { "include": "#literal-string-interpolated-text-new-nested-parenthesis" },
+        { "include": "#expression" }
+      ]
+    },
+    "literal-string-interpolated-text-new-nested-parenthesis": {
+      "begin": "\\(",
+      "end": "\\)",
+      "patterns": [
+        { "include": "#literal-string-interpolated-text-new-nested-parenthesis" },
+        { "include": "#expression" }
+      ]
+    },
     "literal-triple-quoted-string-raw": {
       "name": "string.quoted.triple.raw.koi",
       "begin": "r(%*)\"{3}",
@@ -184,7 +288,8 @@
       "begin": "(%*)\"{3}",
       "end": "\"{3}\\1",
       "patterns": [
-        { "include": "#literal-string-contents" }
+        { "include": "#literal-string-contents" },
+        { "include": "#literal-string-interpolated-text-new" }
       ]
     },
     "literal-double-quoted-string-raw": {
@@ -206,7 +311,8 @@
       "begin": "(%*)\"",
       "end": "\"\\1",
       "patterns": [
-        { "include": "#literal-string-contents" }
+        { "include": "#literal-string-contents" },
+        { "include": "#literal-string-interpolated-text-new" }
       ]
     },
 
@@ -222,11 +328,11 @@
     },
     "entity-function-binding": {
       "name": "entity.name.function",
-      "match": "(?<=func|iter)\\s+(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)"
+      "match": "(?<=func|iter|def|define)\\s+(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]?!]*)"
     },
     "entity-function-invocation": {
       "name": "entity.name.function",
-      "match": "(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]]*)\\s*(?=\\((?!\\s*of\\W))"
+      "match": "(`[_~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:alpha:]][ _~!@#$%^&*+-=<>?\\\\/\\p{Sc}\\p{Sm}[:word:]]*`|[_[:alpha:]][[:word:]?!]*)\\s*(?=\\()"
     },
     "entity-module-binding": {
       "match": "(?<=module)\\s+([_[:alpha:]][[:word:].]*)",
@@ -235,7 +341,7 @@
       }
     },
     "entity-type-binding": {
-      "match": "(?<=type)(?:\\s+(alias|rec))?(?:\\s+([_[:alpha:]][[:word:]]*))",
+      "match": "(?<=type)(?:\\s+(alias|rec))?(?:\\s+())",
       "captures": {
         "1": { "name": "keyword.other.helios" },
         "2": { "name": "entity.name.type" }
@@ -249,7 +355,7 @@
     },
 
 
-    "symbol": {
+    "sigil": {
       "name": "keyword.other",
       "match": "(\\.{2}|\\+|-|\\*|\\/|\\\\|:|(:|!)?=|;|~|@|\\$|%|&|\\||\\^|<|>)"
     }

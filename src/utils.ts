@@ -114,7 +114,7 @@ async function locateExecutable(ec: vs.ExtensionContext): Promise<string> {
       async (_progress, token) => {
         return new Promise<string>((resolve, reject) => {
           token.onCancellationRequested(() => {
-            console.warn('The task has been cancelled');
+            console.warn('Locating the executable has been canceled');
             return reject(new HeliosError(HeliosErrorCode.LS_SEARCH_CANCELED));
           });
 
@@ -129,7 +129,7 @@ async function locateExecutable(ec: vs.ExtensionContext): Promise<string> {
               resolve(path);
             })
             .catch(error => {
-              console.error(`Failed to find executable: ${error}`);
+              console.error('Failed to find executable:', error);
               reject(new HeliosError(HeliosErrorCode.LS_NOT_FOUND));
             })
             .finally(() => {

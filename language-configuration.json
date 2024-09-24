@@ -3,7 +3,7 @@
     // symbol used for single line comment
     "lineComment": "#",
     // symbols used for start and end a block comment
-    "blockComment": ["{|", "|}"]
+    "blockComment": ["{{", "}}"]
   },
   // symbols used as brackets
   "brackets": [
@@ -24,12 +24,9 @@
     { "open": "r\"", "close": "\"", "notIn": ["comment", "string"] },
     { "open": "%\"", "close": "\"%", "notIn": ["comment", "string"] },
 
-    { "open": "\"\"\"", "close": "\"\"", "notIn": ["comment", "string"] },
+    { "open": "'''", "close": "''", "notIn": ["comment", "string"] },
+    { "open": "\"\"\"", "close": "\"\"", "notIn": ["comment", "string"] }
     // { "open": "%\"\"\"", "close": "\"\"%", "notIn": ["comment", "string"] },
-
-    { "open": "[:", "close": ":", "notIn": ["comment", "string"] },
-    { "open": "[%", "close": "%", "notIn": ["comment", "string"] },
-    { "open": "{|", "close": "|", "notIn": ["comment", "string"] }
   ],
   // symbols that that can be used to surround a selection
   "surroundingPairs": [
